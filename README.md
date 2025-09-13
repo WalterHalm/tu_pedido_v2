@@ -28,12 +28,6 @@ Sistema completo de gestión de pedidos para restaurantes de comida rápida desa
 - Tiempo transcurrido por estado y tiempo total
 - Botones de acción para cambiar estados
 
-### ⏰ Gestión de Sesiones de Trabajo
-- Control de apertura y cierre del restaurante
-- Horarios estimados de funcionamiento
-- Estadísticas por sesión (pedidos totales, completados, rechazados, tiempo promedio)
-- Los clientes solo pueden hacer pedidos cuando hay sesión abierta
-
 ### 🛒 Integración con eCommerce
 - API para verificar si el restaurante está abierto
 - Creación automática de pedidos desde el eCommerce
@@ -51,25 +45,26 @@ Sistema completo de gestión de pedidos para restaurantes de comida rápida desa
 - Cancelación automática de orden al rechazar pedido
 - Detección automática de tipo de entrega (delivery vs pickup)
 - Desactivación automática de notificaciones al aceptar/rechazar pedidos
-- Asignación automática a sesión de trabajo activa
+- Formateo automático de nombres de mesa en notificaciones
 
 ## Instalación
 
 1. Copiar el módulo a la carpeta de addons de Odoo
-2. Actualizar la lista de aplicaciones
-3. Instalar el módulo "Tu Pedido - Sistema Comidas Rapidas"
+2. Reiniciar el servidor Odoo
+3. Actualizar la lista de aplicaciones (Apps > Update Apps List)
+4. Buscar "Tu Pedido v2" e instalar el módulo
 
 ## Configuración Inicial
 
-### 1. Abrir Sesión de Trabajo
-- Ir a **Tu Pedido > Control de Sesión**
-- Hacer clic en "🟢 Abrir Sesión"
-- Configurar horarios estimados de apertura y cierre
-
-### 2. Acceder al Dashboard
+### 1. Acceder al Dashboard
 - Ir a **Tu Pedido > Dashboard**
 - El dashboard mostrará las columnas de estados de pedidos
 - Los pedidos nuevos aparecerán automáticamente con sonido y efectos visuales
+
+### 2. Configurar PoS (si usas Punto de Venta)
+- Abrir una sesión PoS
+- Los botones de notificaciones aparecerán automáticamente
+- Usar el botón "Enviar a Cocina" para enviar pedidos al dashboard
 
 ## Uso del Sistema
 
@@ -80,15 +75,14 @@ Sistema completo de gestión de pedidos para restaurantes de comida rápida desa
    - Arrastrar tarjetas entre columnas para cambiar estados
    - Usar botones "Aceptar/Rechazar" para pedidos nuevos
    - Usar botón "Siguiente" para avanzar estados
-3. **Control de Sesión**: Abrir/cerrar el restaurante según horarios
-4. **Notificaciones PoS**: 
+3. **Notificaciones PoS**: 
    - Botón azul: Nuevos pedidos web
    - Botón verde: Pedidos delivery listos
    - Botón morado: Pedidos pickup listos
 
 ### Para los Clientes (eCommerce)
 
-1. **Realizar Pedido**: Crear pedido desde el sitio web (solo si el restaurante está abierto)
+1. **Realizar Pedido**: Crear pedido desde el sitio web
 2. **Seguimiento**: Acceder al widget de estado con el ID del pedido
 3. **Confirmación**: Confirmar recepción cuando el pedido esté despachado
 
@@ -165,7 +159,6 @@ Widget HTML para mostrar el estado del pedido al cliente
 - `direccion_entrega_completa`: Dirección completa para delivery
 - `tiempo_estado_minutos`: Minutos en el estado actual (computado)
 - `tiempo_total_minutos`: Minutos totales desde creación (computado)
-- `sesion_trabajo_id`: Relación con la sesión de trabajo
 
 ## Campos Adicionales en Órdenes PoS
 
@@ -182,32 +175,31 @@ Widget HTML para mostrar el estado del pedido al cliente
 - **Navegadores**: Chrome, Firefox, Safari, Edge (con soporte para Web Audio API)
 - **Dispositivos**: Desktop, Tablet (responsive design)
 
-## Versiones y Mejoras
+## Funcionalidades Principales
 
-### v2.1 - Sistema de Notificaciones Completo (Enero 2025)
-- ✅ Sistema unificado de notificaciones PoS
-- ✅ Notificaciones web, delivery y pickup
-- ✅ Formateo automático de nombres de mesa
-- ✅ Desactivación automática de alertas
-- ✅ Limpieza y optimización de código
+### ✅ Dashboard Interactivo
+- Vista Kanban con drag & drop
+- Estados en tiempo real
+- Notificaciones automáticas
+- Seguimiento de tiempos
 
-### v2.0 - Notificaciones Pickup
-- ✅ Notificaciones para pedidos listos para retirar
-- ✅ Detección automática de tipo de entrega
-- ✅ Botones flotantes independientes
+### ✅ Sistema de Notificaciones
+- 3 tipos de notificaciones PoS
+- Botones flotantes con contadores
+- Modales informativos
+- Formateo inteligente
 
-### v1.9 - Mejoras Dashboard
-- ✅ Efectos visuales mejorados
-- ✅ Sincronización sonido/visual
-- ✅ Corrección de estados
-
-### v1.8 - Notificaciones Web
-- ✅ Alertas de pedidos eCommerce en PoS
-- ✅ Integración completa web-PoS
+### ✅ Integración Completa
+- eCommerce y PoS unificados
+- APIs para seguimiento
+- Confirmación de cliente
+- Automatizaciones inteligentes
 
 ## Soporte
 
-Para soporte técnico o consultas sobre el módulo, contactar al desarrollador.
+- **Repositorio**: https://github.com/WalterHalm/tu_pedido_v2
+- **Issues**: Reportar problemas en GitHub
+- **Documentación**: Ver archivos incluidos en el módulo
 
 ## Licencia
 
@@ -215,6 +207,6 @@ LGPL-3
 
 ---
 
-**Versión**: 2.1  
+**Versión**: 2.1.0  
 **Última actualización**: Enero 2025  
-**Autor**: Walter - Tu Pedido v2
+**Autor**: Walter Halm - Tu Pedido v2
