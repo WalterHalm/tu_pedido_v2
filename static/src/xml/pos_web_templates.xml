@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+<!-- Template invisible para notificaciones web -->
+<t t-name="tu_pedido_v2.WebOrderNotifications">
+    <div class="web-order-notifications" style="display: none;"></div>
+</t>
+
+</templates>

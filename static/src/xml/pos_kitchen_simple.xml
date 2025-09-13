@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="ActionpadWidget" t-inherit="point_of_sale.ActionpadWidget" t-inherit-mode="extension">
+        <xpath expr="//div[hasclass('actionpad')]" position="inside">
+            <button t-if="showKitchenButton" 
+                    class="btn btn-success kitchen-simple-button"
+                    t-on-click="sendToKitchen">
+                🍳 Enviar a Cocina
+            </button>
+        </xpath>
+    </t>
+</templates>

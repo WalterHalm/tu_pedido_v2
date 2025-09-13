@@ -1,0 +1,181 @@
+<odoo>
+  <!-- Vista de formulario extendida -->
+  <record id="view_order_form_tu_pedido" model="ir.ui.view">
+    <field name="name">sale.order.form.tu_pedido</field>
+    <field name="model">sale.order</field>
+    <field name="inherit_id" ref="sale.view_order_form"/>
+    <field name="arch" type="xml">
+      <xpath expr="//sheet/notebook" position="inside">
+        <page string="Estado Cocina">
+          <group>
+            <group>
+              <field name="estado_rapido" widget="badge"/>
+              <field name="nota_cocina" placeholder="Instrucciones especiales para la cocina..."/>
+              <field name="cliente_confirmo_recepcion" readonly="1"/>
+              <field name="sonido_activo" readonly="1"/>
+            </group>
+            <group>
+              <field name="tiempo_inicio_estado" readonly="1"/>
+              <field name="tiempo_inicio_total" readonly="1"/>
+              <field name="tiempo_estado_minutos" readonly="1"/>
+              <field name="tiempo_total_minutos" readonly="1"/>
+              <field name="tiene_reclamo" readonly="1"/>
+              <field name="descripcion_reclamo" readonly="1" invisible="not tiene_reclamo"/>
+              <field name="motivo_rechazo" readonly="1" invisible="estado_rapido != 'rechazado'"/>
+              <field name="productos_modificados" readonly="1"/>
+            </group>
+          </group>
+          
+          <div class="alert alert-warning" invisible="0">
+            <strong>ATENCION:</strong> Los productos de este pedido han sido modificados despues de ser aceptado.
+            <button name="action_marcar_productos_revisados" type="object" class="btn btn-sm btn-primary ml-2">
+              Marcar como Revisado
+            </button>
+            <button name="action_detectar_cambios_manual" type="object" class="btn btn-sm btn-warning ml-2">
+              Detectar Cambios
+            </button>
+          </div>
+          
+          <div class="oe_button_box" name="button_box">
+            <button name="action_aceptar_pedido" type="object" 
+                    class="oe_stat_button" icon="fa-check"
+                    invisible="estado_rapido != 'nuevo'">
+              <div class="o_field_widget o_stat_info">
+                <span class="o_stat_text">Aceptar</span>
+                <span class="o_stat_text">Pedido</span>
+              </div>
+            </button>
+            
+            <button name="action_rechazar_pedido" type="object" 
+                    class="oe_stat_button" icon="fa-times"
+                    invisible="estado_rapido != 'nuevo'">
+              <div class="o_field_widget o_stat_info">
+                <span class="o_stat_text">Rechazar</span>
+                <span class="o_stat_text">Pedido</span>
+              </div>
+            </button>
+            
+            <button name="action_siguiente_estado" type="object" 
+                    class="oe_stat_button" icon="fa-arrow-right"
+                    invisible="estado_rapido in ['nuevo', 'entregado', 'rechazado']">
+              <div class="o_field_widget o_stat_info">
+                <span class="o_stat_text">Siguiente</span>
+                <span class="o_stat_text">Estado</span>
+              </div>
+            </button>
+            
+            <button name="action_cliente_confirma_recepcion" type="object" 
+                    class="oe_stat_button" icon="fa-handshake-o"
+                    invisible="estado_rapido != 'despachado'">
+              <div class="o_field_widget o_stat_info">
+                <span class="o_stat_text">Cliente</span>
+                <span class="o_stat_text">Recibió</span>
+              </div>
+            </button>
+            
+
+          </div>
+        </page>
+      </xpath>
+    </field>
+  </record>
+
+  <!-- Vista de lista con estados -->
+  <record id="view_order_tree_tu_pedido" model="ir.ui.view">
+    <field name="name">sale.order.tree.tu_pedido</field>
+    <field name="model">sale.order</field>
+    <field name="inherit_id" ref="sale.view_order_tree"/>
+    <field name="arch" type="xml">
+      <xpath expr="//field[@name='state']" position="after">
+        <field name="estado_rapido" widget="badge"/>
+        <field name="tiempo_total_minutos"/>
+      </xpath>
+    </field>
+  </record>
+
+  <!-- Vista Kanban para pedidos -->
+  <record id="view_order_kanban_tu_pedido" model="ir.ui.view">
+    <field name="name">sale.order.kanban.tu_pedido</field>
+    <field name="model">sale.order</field>
+    <field name="arch" type="xml">
+      <kanban default_group_by="estado_rapido" class="o_kanban_dashboard">
+        <field name="name"/>
+        <field name="partner_id"/>
+        <field name="estado_rapido"/>
+        <field name="nota_cocina"/>
+        <field name="tiempo_estado_minutos"/>
+        <field name="tiempo_total_minutos"/>
+        <field name="sonido_activo"/>
+        <templates>
+          <t t-name="kanban-box">
+            <div class="oe_kanban_card oe_kanban_global_click">
+              <div class="oe_kanban_content">
+                <div class="o_kanban_record_top">
+                  <div class="o_kanban_record_headings">
+                    <strong class="o_kanban_record_title">
+                      <field name="name"/>
+                    </strong>
+                    <br/>
+                    <span class="o_kanban_record_subtitle">
+                      <field name="partner_id"/>
+                    </span>
+                  </div>
+                  <div class="o_kanban_manage_button_section">
+                    <a class="o_kanban_manage_toggle_button" href="#">
+                      <i class="fa fa-ellipsis-v" role="img" aria-label="Manage" title="Manage"/>
+                    </a>
+                  </div>
+                </div>
+                
+                <div class="o_kanban_record_body">
+                  <field name="nota_cocina" t-if="record.nota_cocina.raw_value"/>
+                  <div class="o_kanban_tags_section">
+                    <span class="badge badge-pill">
+                      ⏱️ <t t-esc="record.tiempo_estado_minutos.value"/>m / 
+                      🕐 <t t-esc="record.tiempo_total_minutos.value"/>m
+                    </span>
+                  </div>
+                </div>
+                
+                <div class="o_kanban_record_bottom">
+                  <div class="oe_kanban_bottom_left">
+                    <field name="estado_rapido" widget="priority"/>
+                  </div>
+                  <div class="oe_kanban_bottom_right">
+                    <t t-if="record.sonido_activo.raw_value">
+                      <span class="badge badge-danger">🔊 Nuevo</span>
+                    </t>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </t>
+        </templates>
+      </kanban>
+    </field>
+  </record>
+
+  <!-- Acción para vista Kanban de pedidos -->
+  <record id="action_orders_kanban_tu_pedido" model="ir.actions.act_window">
+    <field name="name">Pedidos Kanban</field>
+    <field name="res_model">sale.order</field>
+    <field name="view_mode">kanban,list,form</field>
+    <field name="domain">[('estado_rapido', '!=', 'entregado')]</field>
+    <field name="context">{}</field>
+    <field name="help" type="html">
+      <p class="o_view_nocontent_smiling_face">
+        No hay pedidos activos
+      </p>
+      <p>
+        Los pedidos aparecerán aquí organizados por estado.
+      </p>
+    </field>
+  </record>
+
+  <!-- Menú para vista Kanban -->
+  <menuitem id="menu_orders_kanban_tu_pedido"
+            name="Pedidos Kanban"
+            parent="sale.sale_order_menu"
+            action="action_orders_kanban_tu_pedido"
+            sequence="5"/>
+</odoo>

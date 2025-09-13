@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="action_pos_delivery_notifications" model="ir.actions.act_window">
+        <field name="name">🚚 Reportes Delivery</field>
+        <field name="res_model">pos.order</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('is_delivery', '=', True)]</field>
+        <field name="context">{'search_default_hoy': 1}</field>
+        <field name="help">Todos los pedidos delivery del día</field>
+    </record>
+
+    <menuitem id="menu_pos_delivery_notifications"
+              name="🚚 Reportes Delivery"
+              parent="point_of_sale.menu_point_of_sale"
+              action="action_pos_delivery_notifications"
+              sequence="15"/>
+
+    <!-- Vista independiente para delivery -->
+    <record id="view_delivery_report_list" model="ir.ui.view">
+        <field name="name">delivery.report.list</field>
+        <field name="model">pos.order</field>
+        <field name="priority">100</field>
+        <field name="arch" type="xml">
+            <list decoration-warning="estado_rapido == 'nuevo'" 
+                  decoration-info="estado_rapido == 'aceptado'" 
+                  decoration-primary="estado_rapido == 'preparacion'" 
+                  decoration-success="estado_rapido == 'terminado'" 
+                  decoration-muted="estado_rapido == 'despachado'" 
+                  decoration-bf="estado_rapido == 'entregado'" 
+                  decoration-danger="estado_rapido == 'rechazado'" 
+                  create="false" edit="false">
+                <field name="tracking_number" string="Pedido"/>
+                <field name="partner_id" string="Cliente"/>
+                <field name="direccion_delivery" string="Dirección"/>
+                <field name="telefono_delivery" string="Teléfono"/>
+                <field name="estado_rapido" string="Estado" widget="badge"/>
+                <field name="date_order" string="Fecha Pedido"/>
+                <field name="write_date" string="Última Actualización"/>
+                <button name="action_marcar_despachado" string="✅ Despachado" 
+                        type="object" class="btn-success"
+                        invisible="estado_rapido not in ['terminado']"/>
+                <button name="action_marcar_entregado" string="📦 Entregado" 
+                        type="object" class="btn-primary"
+                        invisible="estado_rapido not in ['despachado']"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_pos_order_delivery_search" model="ir.ui.view">
+        <field name="name">pos.order.delivery.search</field>
+        <field name="model">pos.order</field>
+        <field name="arch" type="xml">
+            <search string="Buscar Delivery">
+                <field name="tracking_number" string="Número Pedido"/>
+                <field name="partner_id" string="Cliente"/>
+                <field name="direccion_delivery" string="Dirección"/>
+                <filter string="Nuevos" name="nuevos" domain="[('estado_rapido', '=', 'nuevo')]"/>
+                <filter string="En Preparación" name="preparacion" domain="[('estado_rapido', 'in', ['aceptado', 'preparacion'])]"/>
+                <filter string="Listos" name="listos" domain="[('estado_rapido', '=', 'terminado')]"/>
+                <filter string="Despachados" name="despachados" domain="[('estado_rapido', '=', 'despachado')]"/>
+                <filter string="Entregados" name="entregados" domain="[('estado_rapido', '=', 'entregado')]"/>
+                <separator/>
+                <filter string="Hoy" name="hoy" domain="[('date_order', '>=', datetime.datetime.combine(context_today(), datetime.time(0,0,0)))]"/>
+                <filter string="Ayer" name="ayer" domain="[('date_order', '>=', (context_today() - datetime.timedelta(days=1)).strftime('%Y-%m-%d')), ('date_order', '&lt;', context_today().strftime('%Y-%m-%d'))]"/>
+                <group expand="0" string="Agrupar Por">
+                    <filter string="Estado" name="group_estado" context="{'group_by': 'estado_rapido'}"/>
+                    <filter string="Fecha" name="group_fecha" context="{'group_by': 'date_order:day'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+</odoo>

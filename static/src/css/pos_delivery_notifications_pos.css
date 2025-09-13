@@ -1,0 +1,298 @@
+.pos-delivery-notification-toast {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 99999;
+    background: white;
+    border: 4px solid #28a745;
+    border-radius: 12px;
+    box-shadow: 0 6px 25px rgba(0, 0, 0, 0.4);
+    min-width: 380px;
+    margin-bottom: 10px;
+    animation: posSlideIn 0.4s ease-out;
+}
+
+@keyframes posSlideIn {
+    from {
+        transform: translateY(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.pos-delivery-toast-content {
+    padding: 20px;
+    background: linear-gradient(135deg, #f8fff9 0%, #e8f5e8 100%);
+    border-radius: 8px;
+}
+
+.pos-delivery-toast-title {
+    font-size: 18px;
+    font-weight: bold;
+    color: #28a745;
+    margin-bottom: 10px;
+    text-align: center;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+}
+
+.pos-delivery-toast-order {
+    font-size: 22px;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 8px;
+    text-align: center;
+    background: #28a745;
+    color: white;
+    padding: 8px;
+    border-radius: 6px;
+}
+
+.pos-delivery-toast-type {
+    font-size: 18px;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 8px;
+    text-align: center;
+    background: #17a2b8;
+    color: white;
+    padding: 6px;
+    border-radius: 4px;
+}
+
+.pos-delivery-toast-client {
+    font-size: 16px;
+    color: #444;
+    margin-bottom: 6px;
+    font-weight: 600;
+}
+
+.pos-delivery-toast-address,
+.pos-delivery-toast-phone {
+    font-size: 14px;
+    color: #666;
+    margin-bottom: 4px;
+    padding: 2px 0;
+}
+
+.pos-delivery-toast-btn {
+    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+    width: 100%;
+    margin-top: 15px;
+    font-size: 16px;
+    transition: all 0.3s ease;
+    box-shadow: 0 3px 10px rgba(40, 167, 69, 0.3);
+}
+
+.pos-delivery-toast-btn:hover {
+    background: linear-gradient(135deg, #218838 0%, #1e7e34 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(40, 167, 69, 0.4);
+}
+
+/* Botón flotante */
+.pos-delivery-float-btn {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 99998;
+    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+    color: white;
+    border: none;
+    border-radius: 50px;
+    padding: 15px 25px;
+    font-weight: bold;
+    font-size: 16px;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(40, 167, 69, 0.4);
+    animation: deliveryPulse 2s infinite;
+    transition: all 0.3s ease;
+}
+
+.pos-delivery-float-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 20px rgba(40, 167, 69, 0.6);
+}
+
+.pos-delivery-float-btn .badge {
+    background: #dc3545;
+    color: white;
+    border-radius: 50%;
+    padding: 4px 8px;
+    font-size: 12px;
+    margin-left: 8px;
+    animation: badgePulse 1s infinite;
+}
+
+@keyframes deliveryPulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+}
+
+@keyframes badgePulse {
+    0%, 100% { background: #dc3545; }
+    50% { background: #ff6b6b; }
+}
+
+/* Modal responsive */
+.pos-delivery-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    z-index: 99999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: fadeIn 0.3s ease;
+}
+
+.pos-delivery-modal-content {
+    background: white;
+    border-radius: 12px;
+    max-width: 90vw;
+    max-height: 80vh;
+    overflow-y: auto;
+    padding: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.pos-delivery-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    border-bottom: 2px solid #28a745;
+    padding-bottom: 10px;
+}
+
+.pos-delivery-modal-close {
+    background: #dc3545;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    cursor: pointer;
+    font-size: 18px;
+}
+
+.pos-delivery-modal-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 15px;
+    max-height: 60vh;
+    overflow-y: auto;
+}
+
+.pos-delivery-modal-item {
+    border: 2px solid #28a745;
+    border-radius: 8px;
+    padding: 15px;
+    background: linear-gradient(135deg, #f8fff9 0%, #e8f5e8 100%);
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* Estilos para notificaciones web */
+.pos-web-float-btn {
+    position: fixed;
+    bottom: 90px;
+    right: 20px;
+    background: linear-gradient(135deg, #007bff, #0056b3);
+    color: white;
+    border: none;
+    padding: 15px 25px;
+    border-radius: 50px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(0, 123, 255, 0.4);
+    z-index: 99998;
+    transition: all 0.3s ease;
+    animation: webPulse 2s infinite;
+}
+
+.pos-web-float-btn:hover {
+    background: linear-gradient(135deg, #0056b3, #004085);
+    transform: scale(1.05);
+    box-shadow: 0 6px 20px rgba(0, 123, 255, 0.6);
+}
+
+.pos-web-float-btn .badge {
+    background: #ffc107;
+    color: #212529;
+    border-radius: 50%;
+    padding: 4px 8px;
+    font-size: 12px;
+    margin-left: 8px;
+    animation: webBadgePulse 1s infinite;
+}
+
+@keyframes webPulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+}
+
+@keyframes webBadgePulse {
+    0%, 100% { background: #ffc107; }
+    50% { background: #ffed4e; }
+}
+
+/* Estilos para notificaciones de pickup */
+.pos-pickup-float-btn {
+    position: fixed;
+    bottom: 160px;
+    right: 20px;
+    background: linear-gradient(135deg, #6f42c1, #5a2d91);
+    color: white;
+    border: none;
+    padding: 15px 25px;
+    border-radius: 50px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(111, 66, 193, 0.4);
+    z-index: 99998;
+    transition: all 0.3s ease;
+    animation: pickupPulse 2s infinite;
+}
+
+.pos-pickup-float-btn:hover {
+    background: linear-gradient(135deg, #5a2d91, #4c1d7a);
+    transform: scale(1.05);
+    box-shadow: 0 6px 20px rgba(111, 66, 193, 0.6);
+}
+
+.pos-pickup-float-btn .badge {
+    background: #fd7e14;
+    color: white;
+    border-radius: 50%;
+    padding: 4px 8px;
+    font-size: 12px;
+    margin-left: 8px;
+    animation: pickupBadgePulse 1s infinite;
+}
+
+@keyframes pickupPulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+}
+
+@keyframes pickupBadgePulse {
+    0%, 100% { background: #fd7e14; }
+    50% { background: #ff922b; }
+}

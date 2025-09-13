@@ -1,0 +1,324 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+<t t-name="tu_pedido_v2.Dashboard">
+  <div class="o_kanban_dashboard pedido-dashboard" t-ref="dashboard">
+    
+
+    
+    <!-- Modal para aceptar pedido -->
+    <div t-if="state.showAceptarModal" class="modal-overlay">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4>Aceptar Pedido</h4>
+          <button class="btn-close" t-on-click.prevent="() => this.closeModal()">×</button>
+        </div>
+        <div class="modal-body">
+          <div class="form-group">
+            <label>Tiempo estimado (minutos):</label>
+            <input type="number" class="form-control" t-model="state.modalData.tiempo_estimado" min="1" max="300"/>
+          </div>
+          <div class="info-entrega">
+            <div t-if="state.modalData.es_para_envio" class="alert alert-info">
+              <strong>📦 PEDIDO PARA ENVÍO</strong><br/>
+              <strong>Dirección:</strong> <span t-esc="state.modalData.direccion_entrega_completa"/>
+            </div>
+            <div t-else="" class="alert alert-success">
+              <strong>🏪 PEDIDO PARA RETIRO EN LOCAL</strong>
+            </div>
+          </div>
+          
+          <div class="form-group" t-if="!state.modalData.es_para_envio">
+            <label>Dirección de entrega (opcional):</label>
+            <textarea class="form-control" t-model="state.modalData.direccion_entrega" rows="2" placeholder="Dirección adicional si es necesaria..."></textarea>
+          </div>
+          <div class="form-group">
+            <label>Notas adicionales:</label>
+            <textarea class="form-control" t-model="state.modalData.notas_adicionales" rows="2"></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-success" t-on-click.prevent="() => this.confirmarAceptar()">Aceptar Pedido</button>
+          <button class="btn btn-secondary" t-on-click.prevent="() => this.closeModal()">Cancelar</button>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Modal para rechazar pedido -->
+    <div t-if="state.showRechazarModal" class="modal-overlay">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4>Rechazar Pedido</h4>
+          <button class="btn-close" t-on-click.prevent="() => this.closeModal()">×</button>
+        </div>
+        <div class="modal-body">
+          <div class="form-group">
+            <label>Motivo del rechazo:</label>
+            <textarea class="form-control" t-model="state.modalData.motivo_rechazo" rows="4" required="required"></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-danger" t-on-click.prevent="() => this.confirmarRechazo()">Rechazar Pedido</button>
+          <button class="btn btn-secondary" t-on-click.prevent="() => this.closeModal()">Cancelar</button>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Modal para cancelación -->
+    <div t-if="state.showCancelacionModal" class="modal-overlay">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4>Pedido Cancelado desde PoS</h4>
+          <button class="btn-close" t-on-click.prevent="() => this.closeCancelacionModal()">×</button>
+        </div>
+        <div class="modal-body">
+          <div class="alert alert-warning">
+            <strong>ATENCIÓN:</strong> Este pedido fue cancelado desde el punto de venta.
+          </div>
+          
+          <div class="cancelacion-info">
+            <h5>Pedido: <span t-esc="state.cancelacionData.pedido_nombre"/></h5>
+            <p><strong>Cliente:</strong> <span t-esc="state.cancelacionData.cliente_nombre"/></p>
+            <p><strong>Motivo:</strong> Cancelado desde el punto de venta</p>
+          </div>
+          
+          <div class="form-group">
+            <label>Notas adicionales (opcional):</label>
+            <textarea class="form-control" t-model="state.cancelacionData.notas_adicionales" rows="3" placeholder="Agregar notas sobre la cancelación..."></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-danger" t-on-click.prevent="() => this.confirmarCancelacion()">Mover a Rechazado</button>
+          <button class="btn btn-secondary" t-on-click.prevent="() => this.closeCancelacionModal()">Mantener Estado</button>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Modal para cambios de productos -->
+    <div t-if="state.showCambiosModal" class="modal-overlay">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4>Cambios en Productos Detectados</h4>
+          <button class="btn-close" t-on-click.prevent="() => this.closeCambiosModal()">×</button>
+        </div>
+        <div class="modal-body">
+          <div class="alert alert-warning">
+            <strong>ATENCION:</strong> Se detectaron cambios en los productos de este pedido.
+          </div>
+          
+          <div class="cambios-info">
+            <h5>Pedido: <span t-esc="state.cambiosData.pedido_nombre"/></h5>
+            <p><strong>Cliente:</strong> <span t-esc="state.cambiosData.cliente_nombre"/></p>
+          </div>
+          
+          <div class="detalles-cambios">
+            <h6>Detalles de los cambios:</h6>
+            
+            <div t-if="state.cambiosData.detalles.agregados.length > 0" class="cambios-agregados">
+              <strong class="text-success">Productos agregados:</strong>
+              <ul>
+                <li t-foreach="state.cambiosData.detalles.agregados" t-as="item" t-key="item_index">
+                  <span t-esc="item.qty"/> x <span t-esc="item.name"/>
+                </li>
+              </ul>
+            </div>
+            
+            <div t-if="state.cambiosData.detalles.modificados.length > 0" class="cambios-modificados">
+              <strong class="text-warning">Productos modificados:</strong>
+              <ul>
+                <li t-foreach="state.cambiosData.detalles.modificados" t-as="item" t-key="item_index">
+                  <span t-esc="item.name"/>: <span t-esc="item.qty_original"/> → <span t-esc="item.qty_nueva"/>
+                </li>
+              </ul>
+            </div>
+            
+            <div t-if="state.cambiosData.detalles.eliminados.length > 0" class="cambios-eliminados">
+              <strong class="text-danger">Productos eliminados:</strong>
+              <ul>
+                <li t-foreach="state.cambiosData.detalles.eliminados" t-as="item" t-key="item_index">
+                  <span t-esc="item.qty"/> x <span t-esc="item.name"/>
+                </li>
+              </ul>
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label>Motivo de la decision:</label>
+            <textarea class="form-control" t-model="state.cambiosData.motivo_decision" rows="3" placeholder="Ej: No tengo stock suficiente, producto agotado, etc."></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-success" t-on-click.prevent="() => this.aceptarCambios()">Aceptar Cambios</button>
+          <button class="btn btn-danger" t-on-click.prevent="() => this.rechazarCambios()">Rechazar Cambios</button>
+          <button class="btn btn-secondary" t-on-click.prevent="() => this.closeCambiosModal()">Cancelar</button>
+        </div>
+      </div>
+    </div>
+    
+    <div class="dashboard-header">
+      <h2>🍕 Dashboard de Pedidos - Tu Pedido</h2>
+      <div class="dashboard-controls">
+        <button class="btn btn-primary" t-on-click="() => this.loadData()">
+          🔄 Actualizar
+        </button>
+      </div>
+    </div>
+    
+    <div class="estado-columns" t-if="!state.loading and !state.error">
+      <t t-foreach="state.state_columns" t-as="col" t-key="col.key">
+        <div class="estado-col" t-att-class="col.key === 'nuevo' ? 'nuevo-col' : ''">
+          <div class="estado-header">
+            <h3><t t-esc="col.title"/></h3>
+            <span class="badge badge-info"><t t-esc="col.count"/></span>
+          </div>
+          
+          <div class="estado-list" t-att-data-state="col.key">
+            <t t-foreach="col.orders" t-as="order" t-key="order.id">
+              <div class="pedido-card" 
+                   t-att-data-order-id="order.id"
+                   t-attf-class="#{order.sonido_activo and 'pedido-nuevo-sonido' or ''} #{order.tiempo_total >= 60 and 'tiempo-critico' or (order.tiempo_total >= 30 and 'tiempo-advertencia' or 'tiempo-normal')}">
+                
+                <!-- Header del pedido -->
+                <div class="pedido-header">
+                  <strong class="cliente-nombre">
+                    👤 <t t-esc="order.partner_id[1]"/>
+                  </strong>
+                  <div class="pedido-numero">
+                    📋 <t t-esc="order.name"/>
+                  </div>
+                </div>
+
+                <!-- Productos -->
+                <div class="productos-section">
+                  <h5>🍽️ Productos:</h5>
+                  <t t-foreach="order.productos" t-as="producto" t-key="producto_index">
+                    <div class="producto-item" 
+                         t-att-class="producto.completado ? 'producto-completado' : ''"
+                         t-att-data-order-id="order.id"
+                         t-att-data-line-id="producto.id"
+                         style="cursor: pointer;"
+                         title="Clic para marcar como completado">
+                      <div class="producto-main">
+                        <span class="producto-name"><t t-esc="producto.name"/><t t-if="producto.completado"> ✓</t></span>
+                        <span class="producto-qty"><t t-esc="producto.qty"/> <t t-esc="producto.uom"/></span>
+                      </div>
+                      
+                      <!-- Atributos del producto -->
+                      <t t-if="producto.attributes and producto.attributes.length > 0">
+                        <div class="producto-attributes">
+                          <t t-foreach="producto.attributes" t-as="attr" t-key="attr_index">
+                            <span class="attribute-badge">
+                              <t t-esc="attr.attribute"/>: <t t-esc="attr.value"/>
+                            </span>
+                          </t>
+                        </div>
+                      </t>
+                    </div>
+                  </t>
+                </div>
+
+                <!-- Notas de cocina -->
+                <div class="notas-section" t-if="order.nota_cocina">
+                  <h5>📝 Notas:</h5>
+                  <div class="nota-cocina"><t t-esc="order.nota_cocina"/></div>
+                </div>
+                
+                <!-- Reclamo -->
+                <div class="reclamo-section" t-if="order.tiene_reclamo">
+                  <h5>⚠️ Reclamo del Cliente:</h5>
+                  <div class="reclamo-descripcion"><t t-esc="order.descripcion_reclamo"/></div>
+                </div>
+
+                <!-- Tiempos -->
+                <div class="tiempos-section">
+                  <div class="tiempo-info">
+                    ⏱️ Estado: <span class="tiempo-estado"><t t-esc="order.tiempo_estado"/>m</span>
+                  </div>
+                  <div class="tiempo-info">
+                    🕐 Total: <span t-attf-class="tiempo-contador #{order.tiempo_total >= 60 and 'critico' or (order.tiempo_total >= 30 and 'advertencia' or 'normal')}"><t t-esc="order.tiempo_total"/>m</span>
+                  </div>
+                </div>
+
+                <!-- Botones de acción -->
+                <div class="pedido-actions">
+                  <t t-if="order.estado_rapido === 'nuevo'">
+                    <button class="btn btn-success btn-sm" 
+                            t-on-click="() => this.aceptarPedido(order.id)">
+                      ✅ Aceptar
+                    </button>
+                    <button class="btn btn-danger btn-sm" 
+                            t-on-click="() => this.rechazarPedido(order.id)">
+                      ❌ Rechazar
+                    </button>
+                  </t>
+                  
+                  <t t-elif="order.estado_rapido === 'despachado'">
+                    <button class="btn btn-warning btn-sm" 
+                            t-on-click="() => this.changeOrderState(order.id, 'entregado')">
+                      🏪 Retirado
+                    </button>
+                    <button class="btn btn-info btn-sm" 
+                            t-on-click="() => this.changeOrderState(order.id, 'entregado')">
+                      📦 Entregado
+                    </button>
+                  </t>
+                  
+                  <t t-elif="order.estado_rapido !== 'rechazado' and order.estado_rapido !== 'entregado' and order.estado_rapido !== 'despachado'">
+                    <button class="btn btn-primary btn-sm" 
+                            t-on-click="() => this.siguienteEstado(order.id)">
+                      ➡️ Siguiente
+                    </button>
+                  </t>
+                </div>
+
+                <!-- Indicador de sonido activo -->
+                <div class="sonido-indicator" t-if="order.sonido_activo">
+                  🔊 Nuevo pedido
+                </div>
+                
+                <!-- Indicador de reclamo -->
+                <div class="reclamo-indicator" t-if="order.tiene_reclamo">
+                  ⚠️ RECLAMO
+                </div>
+                
+                <!-- Indicador de productos modificados -->
+                <div class="productos-modificados-indicator clickeable" t-if="order.productos_modificados" 
+                     t-on-click.prevent="() => this.mostrarCambiosModal(order)">
+                  🔄 PRODUCTOS MODIFICADOS
+                </div>
+                
+                <!-- Indicador de pedido cancelado -->
+                <div class="pedido-cancelado-indicator clickeable" t-if="order.pedido_cancelado" 
+                     t-on-click.prevent="() => this.mostrarCancelacionModal(order)">
+                  ❌ CANCELADO
+                </div>
+              </div>
+            </t>
+            
+            <!-- Mensaje cuando no hay pedidos -->
+            <div class="empty-state" t-if="col.orders.length === 0">
+              <p>No hay pedidos en este estado</p>
+            </div>
+          </div>
+        </div>
+      </t>
+    </div>
+
+    <!-- Loading state -->
+    <div class="loading-state" t-if="state.loading">
+      <div class="spinner-border" role="status">
+        <span class="sr-only">Cargando...</span>
+      </div>
+      <p>Cargando pedidos...</p>
+    </div>
+
+    <!-- Error state -->
+    <div class="error-state alert alert-danger" t-if="state.error">
+      <h4>Error</h4>
+      <p><t t-esc="state.error"/></p>
+      <button class="btn btn-primary" t-on-click="() => this.loadData()">
+        Reintentar
+      </button>
+    </div>
+  </div>
+</t>
+</templates>

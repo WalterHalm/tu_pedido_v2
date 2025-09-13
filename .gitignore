@@ -1,0 +1,42 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyc
+*.pyo
+
+# Odoo
+*.orig
+*.rej
+*~
+*.swp
+*.swo
+
+# Sistema
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDE
+.vscode/
+.idea/
+*.sublime-*
+
+# Logs
+*.log
+
+# Documentación interna (no distribuir)
+ARQUITECTURA.md
+NOTIFICACIONES_SISTEMA_COMPLETO.md
+LIMPIEZA_CODIGO_v2.1.md
+RELEASE_NOTES_v2.1.0.md
+DASHBOARD_CONFIGURACION.md
+
+# Archivos temporales
+*.tmp
+*.bak
+*.backup
+
+# Pruebas
+test_*.html
+test_*.py

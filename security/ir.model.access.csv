@@ -1,0 +1,5 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_tu_pedido_v2_aceptar_wizard,access_tu_pedido_v2_aceptar_wizard,model_tu_pedido_v2_aceptar_pedido_wizard,base.group_user,1,1,1,1
+access_tu_pedido_v2_rechazar_wizard,access_tu_pedido_v2_rechazar_wizard,model_tu_pedido_v2_rechazar_pedido_wizard,base.group_user,1,1,1,1
+access_sale_order_manager,access_sale_order_manager,sale.model_sale_order,sales_team.group_sale_manager,1,1,1,1
+access_pos_order_manager,access_pos_order_manager,point_of_sale.model_pos_order,point_of_sale.group_pos_manager,1,1,1,1
