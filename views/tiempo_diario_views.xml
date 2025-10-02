@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Vista List para Tiempo Diario -->
+    <record id="view_tiempo_diario_list" model="ir.ui.view">
+        <field name="name">tu_pedido.tiempo.diario.estado.list</field>
+        <field name="model">tu_pedido.tiempo.diario.estado</field>
+        <field name="arch" type="xml">
+            <list string="Tiempos por Día y Estado" create="0" edit="0" delete="0">
+                <field name="fecha"/>
+                <field name="estado" widget="badge" 
+                       decoration-info="estado == 'preparacion'"
+                       decoration-success="estado == 'terminado'"
+                       decoration-warning="estado == 'aceptado'"/>
+                <field name="total_pedidos"/>
+                <field name="tiempo_promedio" string="Promedio (min)" widget="integer"/>
+                <field name="tiempo_minimo" string="Mín (min)"/>
+                <field name="tiempo_maximo" string="Máx (min)"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Vista Graph para Tiempo Diario -->
+    <record id="view_tiempo_diario_graph" model="ir.ui.view">
+        <field name="name">tu_pedido.tiempo.diario.estado.graph</field>
+        <field name="model">tu_pedido.tiempo.diario.estado</field>
+        <field name="arch" type="xml">
+            <graph string="Evolución de Tiempos" type="line">
+                <field name="fecha" type="row"/>
+                <field name="tiempo_promedio" type="measure"/>
+            </graph>
+        </field>
+    </record>
+
+    <!-- Vista Search para Tiempo Diario -->
+    <record id="view_tiempo_diario_search" model="ir.ui.view">
+        <field name="name">tu_pedido.tiempo.diario.estado.search</field>
+        <field name="model">tu_pedido.tiempo.diario.estado</field>
+        <field name="arch" type="xml">
+            <search string="Buscar Tiempos Diarios">
+                <field name="fecha" string="Fecha"/>
+                <field name="estado" string="Estado"/>
+                
+                <!-- Filtros por estado -->
+                <filter name="preparacion" string="En Preparación" 
+                        domain="[('estado', '=', 'preparacion')]"/>
+                <filter name="aceptado" string="Aceptado" 
+                        domain="[('estado', '=', 'aceptado')]"/>
+                <filter name="terminado" string="Terminado" 
+                        domain="[('estado', '=', 'terminado')]"/>
+                
+                <separator/>
+                
+                <!-- Filtros por fecha -->
+                <filter name="hoy" string="Hoy" 
+                        domain="[('fecha', '=', context_today())]"/>
+                <filter name="ayer" string="Ayer" 
+                        domain="[('fecha', '=', (context_today() - relativedelta(days=1)))]"/>
+                <filter name="ultimos_7_dias" string="Últimos 7 días" 
+                        domain="[('fecha', '&gt;=', (context_today() - relativedelta(days=7)))]"/>
+                
+                <!-- Agrupaciones -->
+                <group expand="0" string="Agrupar por">
+                    <filter name="group_fecha" string="Fecha" context="{'group_by': 'fecha'}"/>
+                    <filter name="group_estado" string="Estado" context="{'group_by': 'estado'}"/>
+                    <filter name="group_mes" string="Mes" context="{'group_by': 'mes'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Acción para Tiempo Diario -->
+    <record id="action_tiempo_diario" model="ir.actions.act_window">
+        <field name="name">📅 Tiempos por Día</field>
+        <field name="res_model">tu_pedido.tiempo.diario.estado</field>
+        <field name="view_mode">list,graph</field>
+        <field name="search_view_id" ref="view_tiempo_diario_search"/>
+        <field name="context">{
+            'search_default_preparacion': 1,
+            'search_default_ultimos_7_dias': 1
+        }</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                📅 Análisis de Tiempos por Día
+            </p>
+            <p>
+                Aquí puedes ver el tiempo promedio que los pedidos pasan en cada estado,
+                día por día. Perfecto para ver la evolución histórica.
+            </p>
+        </field>
+    </record>
+
+    <!-- Reemplazar el menú anterior -->
+    <record id="menu_estado_analytics" model="ir.ui.menu">
+        <field name="name">📅 Tiempos por Día</field>
+        <field name="parent_id" ref="menu_analisis_operacional"/>
+        <field name="action" ref="action_tiempo_diario"/>
+        <field name="sequence">15</field>
+    </record>
+</odoo>

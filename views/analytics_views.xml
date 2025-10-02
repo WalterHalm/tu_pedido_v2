@@ -1,0 +1,249 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Vista List para Analytics -->
+    <record id="view_analytics_list" model="ir.ui.view">
+        <field name="name">tu_pedido.analytics.list</field>
+        <field name="model">tu_pedido.analytics</field>
+        <field name="arch" type="xml">
+            <list string="Analytics de Pedidos" create="0" edit="0" delete="0">
+                <field name="fecha"/>
+                <field name="hora"/>
+                <field name="pedido_nombre"/>
+                <field name="cliente_nombre"/>
+                <field name="estado_actual" widget="badge" 
+                       decoration-success="estado_actual == 'entregado'"
+                       decoration-danger="estado_actual == 'rechazado'"
+                       decoration-warning="estado_actual == 'terminado'"
+                       decoration-info="estado_actual == 'preparacion'"/>
+                <field name="tiempo_total" widget="integer"/>
+                <field name="tipo_pedido" widget="badge"/>
+                <field name="tipo_entrega" widget="badge"/>
+                <field name="monto_total" widget="monetary"/>
+                <field name="tiempo_total" widget="integer"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Vista Kanban para Analytics -->
+    <record id="view_analytics_kanban" model="ir.ui.view">
+        <field name="name">tu_pedido.analytics.kanban</field>
+        <field name="model">tu_pedido.analytics</field>
+        <field name="arch" type="xml">
+            <kanban string="Analytics Kanban" create="0" edit="0" delete="0">
+                <field name="fecha"/>
+                <field name="pedido_nombre"/>
+                <field name="cliente_nombre"/>
+                <field name="estado_actual"/>
+                <field name="tiempo_total"/>
+                <field name="tipo_pedido"/>
+                <field name="tipo_entrega"/>
+                <field name="monto_total"/>
+
+                <templates>
+                    <t t-name="kanban-box">
+                        <div class="oe_kanban_card oe_kanban_global_click">
+                            <div class="oe_kanban_content">
+                                <div class="row">
+                                    <div class="col-6">
+                                        <strong><field name="pedido_nombre"/></strong>
+                                    </div>
+                                    <div class="col-6 text-right">
+                                        <span class="badge badge-pill" t-attf-class="badge-#{estado_actual == 'entregado' and 'success' or estado_actual == 'rechazado' and 'danger' or 'warning'}">
+                                            <field name="estado_actual"/>
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="row mt-2">
+                                    <div class="col-12">
+                                        <i class="fa fa-user"/> <field name="cliente_nombre"/>
+                                    </div>
+                                </div>
+                                <div class="row mt-1">
+                                    <div class="col-6">
+                                        <i class="fa fa-clock-o"/> <field name="tiempo_total"/>min
+                                    </div>
+                                    <div class="col-6 text-right">
+                                        <i class="fa fa-money"/> $<field name="monto_total"/>
+                                    </div>
+                                </div>
+                                <div class="row mt-1">
+                                    <div class="col-6">
+                                        <span class="badge" t-attf-class="badge-#{tipo_pedido == 'web' and 'primary' or 'secondary'}">
+                                            <field name="tipo_pedido"/>
+                                        </span>
+                                    </div>
+                                    <div class="col-6 text-right">
+                                        <span class="badge" t-attf-class="badge-#{tipo_entrega == 'delivery' and 'info' or 'dark'}">
+                                            <field name="tipo_entrega"/>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- Vista Calendar para Analytics -->
+    <record id="view_analytics_calendar" model="ir.ui.view">
+        <field name="name">tu_pedido.analytics.calendar</field>
+        <field name="model">tu_pedido.analytics</field>
+        <field name="arch" type="xml">
+            <calendar string="Calendario de Pedidos" 
+                     date_start="hora" 
+                     color="tipo_pedido"
+                     quick_create="0"
+                     create="0"
+                     edit="0"
+                     delete="0">
+                <field name="pedido_nombre"/>
+                <field name="cliente_nombre"/>
+                <field name="estado_actual"/>
+                <field name="tipo_entrega"/>
+                <field name="monto_total"/>
+            </calendar>
+        </field>
+    </record>
+
+    <!-- Vista Graph para Analytics -->
+    <record id="view_analytics_graph" model="ir.ui.view">
+        <field name="name">tu_pedido.analytics.graph</field>
+        <field name="model">tu_pedido.analytics</field>
+        <field name="arch" type="xml">
+            <graph string="Gráficos de Analytics" type="bar">
+                <field name="fecha" type="row"/>
+                <field name="monto_total" type="measure"/>
+                <field name="tiempo_total" type="measure"/>
+            </graph>
+        </field>
+    </record>
+
+    <!-- Vista Pivot para Analytics -->
+    <record id="view_analytics_pivot" model="ir.ui.view">
+        <field name="name">tu_pedido.analytics.pivot</field>
+        <field name="model">tu_pedido.analytics</field>
+        <field name="arch" type="xml">
+            <pivot string="Tabla Dinámica Analytics">
+                <field name="fecha" type="row"/>
+                <field name="tipo_pedido" type="col"/>
+                <field name="monto_total" type="measure"/>
+                <field name="tiempo_total" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <!-- Vista Search para Analytics -->
+    <record id="view_analytics_search" model="ir.ui.view">
+        <field name="name">tu_pedido.analytics.search</field>
+        <field name="model">tu_pedido.analytics</field>
+        <field name="arch" type="xml">
+            <search string="Buscar Analytics">
+                <!-- Filtros de búsqueda -->
+                <field name="pedido_nombre" string="Número Pedido"/>
+                <field name="cliente_nombre" string="Cliente"/>
+                <field name="fecha" string="Fecha"/>
+                
+                <!-- Filtros predefinidos -->
+                <filter name="hoy" string="Hoy" 
+                        domain="[('fecha', '=', context_today())]"/>
+                <filter name="ultimos_7_dias" string="Últimos 7 días" 
+                        domain="[('fecha', '&gt;=', (context_today() - relativedelta(days=7)))]"/>
+                <filter name="ultimos_30_dias" string="Últimos 30 días" 
+                        domain="[('fecha', '&gt;=', (context_today() - relativedelta(days=30)))]"/>
+                
+                <separator/>
+                
+                <filter name="web_orders" string="Pedidos Web" 
+                        domain="[('tipo_pedido', '=', 'web')]"/>
+                <filter name="pos_orders" string="Pedidos PoS" 
+                        domain="[('tipo_pedido', '=', 'pos')]"/>
+                
+                <separator/>
+                
+                <filter name="delivery" string="Delivery" 
+                        domain="[('tipo_entrega', '=', 'delivery')]"/>
+                <filter name="pickup" string="Retiro Local" 
+                        domain="[('tipo_entrega', '=', 'pickup')]"/>
+                
+                <separator/>
+                
+                <filter name="completados" string="Completados" 
+                        domain="[('estado_actual', '=', 'entregado')]"/>
+                <filter name="rechazados" string="Rechazados" 
+                        domain="[('estado_actual', '=', 'rechazado')]"/>
+                <filter name="en_proceso" string="En Proceso" 
+                        domain="[('estado_actual', 'in', ['nuevo', 'aceptado', 'preparacion', 'terminado', 'despachado'])]"/>
+                
+                <separator/>
+                
+                <filter name="rapidos" string="Rápidos (&lt; 15min)" 
+                        domain="[('tiempo_total', '&lt;', 15)]"/>
+                <filter name="lentos" string="Lentos (&gt; 30min)" 
+                        domain="[('tiempo_total', '&gt;', 30)]"/>
+                
+                <!-- Agrupaciones -->
+                <group expand="0" string="Agrupar por">
+                    <filter name="group_fecha" string="Fecha" context="{'group_by': 'fecha'}"/>
+                    <filter name="group_estado" string="Estado" context="{'group_by': 'estado_actual'}"/>
+                    <filter name="group_tipo_pedido" string="Tipo Pedido" context="{'group_by': 'tipo_pedido'}"/>
+                    <filter name="group_tipo_entrega" string="Tipo Entrega" context="{'group_by': 'tipo_entrega'}"/>
+
+                    <filter name="group_hora" string="Hora del Día" context="{'group_by': 'hora_del_dia'}"/>
+                    <filter name="group_dia_semana" string="Día de la Semana" context="{'group_by': 'dia_semana'}"/>
+                    <filter name="group_mes" string="Mes" context="{'group_by': 'mes'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Vista Form para Métricas en Tiempo Real -->
+    <record id="view_metricas_realtime_form" model="ir.ui.view">
+        <field name="name">tu_pedido.metricas.realtime.form</field>
+        <field name="model">tu_pedido.metricas.realtime</field>
+        <field name="arch" type="xml">
+            <form string="Métricas en Tiempo Real">
+                <sheet>
+                    <div class="oe_title">
+                        <h1>📊 Métricas en Tiempo Real</h1>
+                    </div>
+                    
+                    <group>
+                        <group string="Período de Análisis">
+                            <field name="fecha_inicio"/>
+                            <field name="fecha_fin"/>
+                        </group>
+                        <group string="Meta Diaria">
+                            <field name="meta_diaria" widget="monetary"/>
+                        </group>
+                    </group>
+                    
+                    <notebook>
+                        <page string="Métricas Principales">
+                            <group>
+                                <group string="📈 Pedidos">
+                                    <field name="pedidos_hoy" widget="statinfo"/>
+                                    <field name="pedidos_promedio" widget="float"/>
+                                </group>
+                                <group string="⏱️ Tiempos">
+                                    <field name="tiempo_promedio" widget="float"/>
+                                </group>
+                            </group>
+                            
+                            <group>
+                                <group string="💰 Ingresos">
+                                    <field name="ingresos_hoy" widget="monetary"/>
+                                    <field name="meta_diaria" widget="monetary"/>
+                                </group>
+                                <group string="📊 Eficiencia">
+                                    <field name="eficiencia_general" widget="percentage"/>
+                                </group>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+</odoo>

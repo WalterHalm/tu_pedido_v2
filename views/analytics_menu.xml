@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Acción para Analytics Principal -->
+    <record id="action_analytics_main" model="ir.actions.act_window">
+        <field name="name">📊 Analytics de Pedidos</field>
+        <field name="res_model">tu_pedido.analytics</field>
+        <field name="view_mode">list,kanban,graph,pivot,calendar</field>
+        <field name="search_view_id" ref="view_analytics_search"/>
+        <field name="context">{
+            'search_default_hoy': 1,
+            'search_default_group_estado': 1
+        }</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                📊 Analytics de Pedidos
+            </p>
+            <p>
+                Aquí encontrarás todas las métricas y análisis de tus pedidos.
+                Los datos se actualizan automáticamente desde el dashboard de cocina.
+            </p>
+        </field>
+    </record>
+
+    <!-- Acción para Métricas en Tiempo Real -->
+    <record id="action_metricas_realtime" model="ir.actions.act_window">
+        <field name="name">⚡ Métricas en Tiempo Real</field>
+        <field name="res_model">tu_pedido.metricas.realtime</field>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="view_metricas_realtime_form"/>
+        <field name="target">new</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                ⚡ Métricas en Tiempo Real
+            </p>
+            <p>
+                Dashboard con métricas actualizadas en tiempo real:
+                pedidos por hora, tiempos promedio, ingresos y eficiencia.
+            </p>
+        </field>
+    </record>
+
+    <!-- Acción para Análisis de Tiempos -->
+    <record id="action_analisis_tiempos" model="ir.actions.act_window">
+        <field name="name">⏱️ Análisis de Tiempos</field>
+        <field name="res_model">tu_pedido.analytics</field>
+        <field name="view_mode">graph,pivot,list</field>
+        <field name="search_view_id" ref="view_analytics_search"/>
+        <field name="context">{
+            'search_default_ultimos_7_dias': 1,
+            'graph_measure': 'tiempo_total',
+            'graph_mode': 'bar',
+            'graph_groupbys': ['estado_actual']
+        }</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                ⏱️ Análisis de Tiempos de Preparación
+            </p>
+            <p>
+                Analiza los tiempos de preparación por estado, identifica cuellos de botella
+                y optimiza los procesos de cocina.
+            </p>
+        </field>
+    </record>
+
+    <!-- Acción para Tablas Detalladas -->
+    <record id="action_tablas_detalladas" model="ir.actions.act_window">
+        <field name="name">📋 Tablas Detalladas</field>
+        <field name="res_model">tu_pedido.analytics</field>
+        <field name="view_mode">list,pivot</field>
+        <field name="search_view_id" ref="view_analytics_search"/>
+        <field name="context">{
+            'search_default_hoy': 1
+        }</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                📋 Tablas Detalladas de Pedidos
+            </p>
+            <p>
+                Vista detallada de todos los pedidos con información completa:
+                hora, cliente, tiempo total, estado, tipo de entrega y montos.
+            </p>
+        </field>
+    </record>
+
+    <!-- Acción para Análisis por Períodos -->
+    <record id="action_analisis_periodos" model="ir.actions.act_window">
+        <field name="name">📅 Análisis por Períodos</field>
+        <field name="res_model">tu_pedido.analytics</field>
+        <field name="view_mode">graph,pivot,calendar</field>
+        <field name="search_view_id" ref="view_analytics_search"/>
+        <field name="context">{
+            'search_default_ultimos_30_dias': 1,
+            'search_default_group_fecha': 1,
+            'graph_measure': 'monto_total',
+            'graph_mode': 'line'
+        }</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                📅 Análisis por Períodos
+            </p>
+            <p>
+                Compara el rendimiento entre diferentes períodos:
+                diario, semanal, mensual. Identifica tendencias y patrones.
+            </p>
+        </field>
+    </record>
+
+    <!-- Acción para Dashboard Ejecutivo -->
+    <record id="action_dashboard_ejecutivo" model="ir.actions.act_window">
+        <field name="name">🎯 Dashboard Ejecutivo</field>
+        <field name="res_model">tu_pedido.analytics</field>
+        <field name="view_mode">kanban,graph,pivot</field>
+        <field name="search_view_id" ref="view_analytics_search"/>
+        <field name="context">{
+            'search_default_ultimos_7_dias': 1,
+            'search_default_completados': 1
+        }</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                🎯 Dashboard Ejecutivo
+            </p>
+            <p>
+                Vista ejecutiva con KPIs principales, métricas de rendimiento
+                y análisis estratégico para toma de decisiones.
+            </p>
+        </field>
+    </record>
+
+    <!-- Menú Principal: Tu Pedido Reportes -->
+    <menuitem id="menu_tu_pedido_reportes" 
+              name="Tu Pedido Reportes" 
+              sequence="20"/>
+
+    <!-- Submenú: Analytics y Métricas -->
+    <menuitem id="menu_analytics_metricas" 
+              name="📊 Analytics y Métricas" 
+              parent="menu_tu_pedido_reportes" 
+              sequence="10"/>
+
+    <!-- Submenú: Análisis Operacional -->
+    <menuitem id="menu_analisis_operacional" 
+              name="⚙️ Análisis Operacional" 
+              parent="menu_tu_pedido_reportes" 
+              sequence="20"/>
+
+    <!-- Submenú: Reportes Ejecutivos -->
+    <menuitem id="menu_reportes_ejecutivos" 
+              name="🎯 Reportes Ejecutivos" 
+              parent="menu_tu_pedido_reportes" 
+              sequence="30"/>
+
+    <!-- Items del menú Analytics y Métricas -->
+    <menuitem id="menu_analytics_main" 
+              name="📊 Analytics Principal" 
+              parent="menu_analytics_metricas" 
+              action="action_analytics_main" 
+              sequence="10"/>
+
+    <menuitem id="menu_metricas_realtime" 
+              name="⚡ Métricas Tiempo Real" 
+              parent="menu_analytics_metricas" 
+              action="action_metricas_realtime" 
+              sequence="20"/>
+
+    <!-- Items del menú Análisis Operacional -->
+    <menuitem id="menu_analisis_tiempos" 
+              name="⏱️ Tiempos de Preparación" 
+              parent="menu_analisis_operacional" 
+              action="action_analisis_tiempos" 
+              sequence="10"/>
+
+    <menuitem id="menu_tablas_detalladas" 
+              name="📋 Tablas Detalladas" 
+              parent="menu_analisis_operacional" 
+              action="action_tablas_detalladas" 
+              sequence="20"/>
+
+    <menuitem id="menu_analisis_periodos" 
+              name="📅 Análisis por Períodos" 
+              parent="menu_analisis_operacional" 
+              action="action_analisis_periodos" 
+              sequence="30"/>
+
+    <!-- Items del menú Reportes Ejecutivos -->
+    <menuitem id="menu_dashboard_ejecutivo" 
+              name="🎯 Dashboard Ejecutivo" 
+              parent="menu_reportes_ejecutivos" 
+              action="action_dashboard_ejecutivo" 
+              sequence="10"/>
+</odoo>

@@ -140,11 +140,32 @@ class SaleOrder(models.Model):
 
     def action_cambiar_estado(self, nuevo_estado):
         try:
+            estado_anterior = self.estado_rapido
+            tiempo_anterior = self.tiempo_inicio_estado
+            
+            # Calcular tiempo en estado anterior
+            minutos_en_estado = 0
+            if tiempo_anterior and estado_anterior:
+                ahora = fields.Datetime.now()
+                if ahora > tiempo_anterior:
+                    delta = ahora - tiempo_anterior
+                    minutos_en_estado = max(0, int(delta.total_seconds() / 60))
+            
+            # Registrar cambio en historial
+            if estado_anterior and estado_anterior != nuevo_estado:
+                self.env['tu_pedido.estado.historial'].create({
+                    'pedido_id': self.id,
+                    'estado_anterior': estado_anterior,
+                    'estado_nuevo': nuevo_estado,
+                    'fecha_cambio': fields.Datetime.now(),
+                    'minutos_en_estado_anterior': minutos_en_estado
+                })
+            
             self.estado_rapido = nuevo_estado
             self.tiempo_inicio_estado = fields.Datetime.now()
             
             # Desactivar sonido cuando cambia de estado "nuevo"
-            if self.estado_rapido == "nuevo" and nuevo_estado != "nuevo":
+            if estado_anterior == "nuevo" and nuevo_estado != "nuevo":
                 self.sonido_activo = False
             
             # Si llega a "aceptado", crear snapshot de productos

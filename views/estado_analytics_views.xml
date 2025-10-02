@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Vista List para Estado Analytics -->
+    <record id="view_estado_analytics_list" model="ir.ui.view">
+        <field name="name">tu_pedido.estado.analytics.list</field>
+        <field name="model">tu_pedido.estado.analytics</field>
+        <field name="arch" type="xml">
+            <list string="Analytics por Estado" create="0" edit="0" delete="0">
+                <field name="año"/>
+                <field name="mes"/>
+                <field name="estado" widget="badge" 
+                       decoration-info="estado == 'preparacion'"
+                       decoration-success="estado == 'terminado'"
+                       decoration-warning="estado == 'aceptado'"/>
+                <field name="total_pedidos" widget="integer"/>
+                <field name="tiempo_promedio" widget="integer" string="Promedio (min)"/>
+                <field name="tiempo_minimo" widget="integer" string="Mín (min)"/>
+                <field name="tiempo_maximo" widget="integer" string="Máx (min)"/>
+                <field name="tiempo_total" widget="integer" string="Total (min)"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Vista Graph para Estado Analytics -->
+    <record id="view_estado_analytics_graph" model="ir.ui.view">
+        <field name="name">tu_pedido.estado.analytics.graph</field>
+        <field name="model">tu_pedido.estado.analytics</field>
+        <field name="arch" type="xml">
+            <graph string="Tiempos por Estado" type="bar">
+                <field name="estado" type="row"/>
+                <field name="tiempo_promedio" type="measure"/>
+            </graph>
+        </field>
+    </record>
+
+    <!-- Vista Pivot para Estado Analytics -->
+    <record id="view_estado_analytics_pivot" model="ir.ui.view">
+        <field name="name">tu_pedido.estado.analytics.pivot</field>
+        <field name="model">tu_pedido.estado.analytics</field>
+        <field name="arch" type="xml">
+            <pivot string="Análisis por Estado">
+                <field name="año" type="col"/>
+                <field name="mes" type="col"/>
+                <field name="estado" type="row"/>
+                <field name="tiempo_promedio" type="measure"/>
+                <field name="total_pedidos" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <!-- Vista Search para Estado Analytics -->
+    <record id="view_estado_analytics_search" model="ir.ui.view">
+        <field name="name">tu_pedido.estado.analytics.search</field>
+        <field name="model">tu_pedido.estado.analytics</field>
+        <field name="arch" type="xml">
+            <search string="Buscar Analytics por Estado">
+                <field name="año" string="Año"/>
+                <field name="mes" string="Mes"/>
+                <field name="estado" string="Estado"/>
+                
+                <!-- Filtros por estado -->
+                <filter name="preparacion" string="En Preparación" 
+                        domain="[('estado', '=', 'preparacion')]"/>
+                <filter name="aceptado" string="Aceptado" 
+                        domain="[('estado', '=', 'aceptado')]"/>
+                <filter name="terminado" string="Terminado" 
+                        domain="[('estado', '=', 'terminado')]"/>
+                
+                <separator/>
+                
+                <!-- Filtros por tiempo -->
+                <filter name="año_actual" string="Año Actual" 
+                        domain="[('año', '=', context_today().year)]"/>
+                <filter name="mes_actual" string="Mes Actual" 
+                        domain="[('mes', '=', str(context_today().month))]"/>
+                
+                <!-- Agrupaciones -->
+                <group expand="0" string="Agrupar por">
+                    <filter name="group_año" string="Año" context="{'group_by': 'año'}"/>
+                    <filter name="group_mes" string="Mes" context="{'group_by': 'mes'}"/>
+                    <filter name="group_estado" string="Estado" context="{'group_by': 'estado'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Acción para Estado Analytics -->
+    <record id="action_estado_analytics" model="ir.actions.act_window">
+        <field name="name">⏱️ Tiempos por Estado</field>
+        <field name="res_model">tu_pedido.estado.analytics</field>
+        <field name="view_mode">list,graph,pivot</field>
+        <field name="search_view_id" ref="view_estado_analytics_search"/>
+        <field name="context">{
+            'search_default_preparacion': 1,
+            'search_default_group_mes': 1
+        }</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                ⏱️ Análisis de Tiempos por Estado
+            </p>
+            <p>
+                Aquí puedes ver cuánto tiempo promedio pasan los pedidos en cada estado,
+                agrupado por mes y año. Perfecto para identificar cuellos de botella.
+            </p>
+        </field>
+    </record>
+
+    <!-- Agregar al menú -->
+    <menuitem id="menu_estado_analytics" 
+              name="⏱️ Tiempos por Estado" 
+              parent="menu_analisis_operacional" 
+              action="action_estado_analytics" 
+              sequence="15"/>
+</odoo>
