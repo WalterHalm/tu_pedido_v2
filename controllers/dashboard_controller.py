@@ -12,16 +12,15 @@ class PedidoDashboardController(http.Controller):
     
     @http.route('/tu_pedido_v2/dashboard_data', type='json', auth='user')
     def dashboard_data(self):
-        # Fecha límite para pedidos rechazados (24 horas)
-        fecha_limite = datetime.now() - timedelta(hours=24)
+        # Fecha de inicio del día actual (00:00:00)
+        hoy_inicio = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
         
-        # Obtener pedidos de venta (incluir todos los que tienen estado_rapido)
+        # Obtener pedidos de venta solo del día actual
         pedidos_venta = request.env['sale.order'].sudo().search([
-            ('estado_rapido', '!=', False),  # Todos los que tienen estado_rapido
+            ('estado_rapido', '!=', False),
             ('estado_rapido', '!=', 'entregado'),
-            '|',
             ('estado_rapido', '!=', 'rechazado'),
-            ('create_date', '>=', fecha_limite)
+            ('create_date', '>=', hoy_inicio)
         ])
         
         # Corregir pedidos sin estado que tienen tracking en nota_cocina
@@ -54,27 +53,25 @@ class PedidoDashboardController(http.Controller):
             })
             pedido._detectar_tipo_entrega()
         
-        # Volver a buscar incluyendo los corregidos
+        # Volver a buscar incluyendo los corregidos (solo del día actual)
         pedidos_venta = request.env['sale.order'].sudo().search([
-            ('estado_rapido', '!=', False),  # Todos los que tienen estado_rapido
+            ('estado_rapido', '!=', False),
             ('estado_rapido', '!=', 'entregado'),
-            '|',
             ('estado_rapido', '!=', 'rechazado'),
-            ('create_date', '>=', fecha_limite)
+            ('create_date', '>=', hoy_inicio)
         ])
         
         # Logs de depuración removidos para producción
         
         # Debug logs removidos para producción
         
-        # Obtener pedidos PoS enviados a cocina (incluir cancelados, excluir rechazados antiguos)
+        # Obtener pedidos PoS enviados a cocina solo del día actual
         pedidos_pos = request.env['pos.order'].sudo().search([
             ('enviado_a_cocina', '=', True),
             ('estado_rapido', '!=', False),
             ('estado_rapido', '!=', 'entregado'),
-            '|',
             ('estado_rapido', '!=', 'rechazado'),
-            ('create_date', '>=', fecha_limite)
+            ('create_date', '>=', hoy_inicio)
         ]) if 'pos.order' in request.env else request.env['pos.order'].sudo().browse([])
         
         # Debug logs removidos para producción
