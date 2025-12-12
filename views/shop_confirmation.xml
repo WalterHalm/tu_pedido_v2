@@ -1,0 +1,169 @@
+<odoo>
+    <template id="shop_confirmation_tracking_mejorado" inherit_id="website_sale.confirmation" priority="100">
+        <xpath expr="//div" position="after">
+            <t t-if="order and order.estado_rapido">
+                <div class="container mt-4 mb-5">
+                    <!-- Número de Pedido -->
+                    <div class="alert alert-success text-center mb-4">
+                        <h3 class="mb-2">✅ ¡Pedido Confirmado!</h3>
+                        <h4>Número de Pedido: <strong><t t-esc="order.name"/></strong></h4>
+                        <p class="mb-0">Guarda este número para consultar tu pedido</p>
+                    </div>
+                    
+                    <!-- Estado del Pedido -->
+                    <div class="card shadow-sm mb-4">
+                        <div class="card-header bg-primary text-white">
+                            <h4 class="mb-0"><i class="fa fa-clock-o"></i> Estado en Tiempo Real</h4>
+                        </div>
+                        <div class="card-body">
+                            <t t-set="progreso" t-value="{'nuevo': 15, 'aceptado': 30, 'preparacion': 60, 'terminado': 80, 'despachado': 95, 'entregado': 100, 'rechazado': 0}.get(order.estado_rapido, 0)"/>
+                            
+                            <div class="mb-4">
+                                <div class="progress" style="height: 35px;">
+                                    <div class="progress-bar bg-success progress-bar-striped progress-bar-animated" 
+                                         t-attf-style="width: {{progreso}}%">
+                                        <strong style="font-size: 16px;"><t t-esc="progreso"/>%</strong>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="alert alert-info text-center">
+                                <h4>
+                                    <t t-if="order.estado_rapido == 'nuevo'">✅ Tu pedido ha sido recibido</t>
+                                    <t t-elif="order.estado_rapido == 'aceptado'">👨‍🍳 Tu pedido ha sido confirmado</t>
+                                    <t t-elif="order.estado_rapido == 'preparacion'">🔥 Estamos preparando tu pedido</t>
+                                    <t t-elif="order.estado_rapido == 'terminado'">✨ Tu pedido está listo</t>
+                                    <t t-elif="order.estado_rapido == 'despachado'">🚚 Tu pedido ha sido despachado</t>
+                                    <t t-elif="order.estado_rapido == 'entregado'">🎉 Pedido entregado</t>
+                                    <t t-elif="order.estado_rapido == 'rechazado'">❌ Pedido rechazado</t>
+                                </h4>
+                                <p class="mt-3 mb-0" style="font-size: 18px;">
+                                    Tiempo transcurrido: <strong><t t-esc="order.tiempo_total_minutos"/> minutos</strong>
+                                </p>
+                                <p t-if="order.tiempo_estimado_entrega > 0" class="mt-2 mb-0" style="font-size: 16px;">
+                                    Tiempo estimado: <strong><t t-esc="order.tiempo_estimado_entrega"/> minutos</strong>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Detalles del Pedido -->
+                    <div class="card shadow-sm mb-4">
+                        <div class="card-header bg-info text-white">
+                            <h4 class="mb-0"><i class="fa fa-shopping-cart"></i> Detalle de tu Pedido</h4>
+                        </div>
+                        <div class="card-body">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Producto</th>
+                                        <th class="text-center">Cantidad</th>
+                                        <th class="text-right">Precio</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <t t-foreach="order.order_line" t-as="line">
+                                        <tr>
+                                            <td><t t-esc="line.name"/></td>
+                                            <td class="text-center"><t t-esc="line.product_uom_qty"/> <t t-esc="line.product_uom.name"/></td>
+                                            <td class="text-right">$<t t-esc="'%.2f' % line.price_subtotal"/></td>
+                                        </tr>
+                                    </t>
+                                </tbody>
+                                <tfoot>
+                                    <tr class="font-weight-bold">
+                                        <td colspan="2" class="text-right">Total:</td>
+                                        <td class="text-right">$<t t-esc="'%.2f' % order.amount_total"/></td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                    </div>
+                    
+                    <!-- Información de Entrega -->
+                    <div class="card shadow-sm mb-4">
+                        <div class="card-header bg-warning text-dark">
+                            <h4 class="mb-0">
+                                <i t-if="order.es_para_envio" class="fa fa-truck"></i>
+                                <i t-else="" class="fa fa-map-marker"></i>
+                                <t t-if="order.es_para_envio">Información de Envío</t>
+                                <t t-else="">Información de Retiro</t>
+                            </h4>
+                        </div>
+                        <div class="card-body">
+                            <t t-if="order.es_para_envio">
+                                <p class="mb-2"><strong>📍 Dirección de entrega:</strong></p>
+                                <p class="ml-3"><t t-esc="order.direccion_entrega_completa or 'No especificada'"/></p>
+                                <p class="mb-0"><strong>📞 Teléfono:</strong> <t t-esc="order.partner_id.phone or order.partner_id.mobile or 'No especificado'"/></p>
+                            </t>
+                            <t t-else="">
+                                <p class="mb-2"><strong>📍 Retira tu pedido en:</strong></p>
+                                <p class="ml-3 mb-0">Nuestro local - Consulta la dirección en la página principal</p>
+                            </t>
+                        </div>
+                    </div>
+                    
+                    <!-- Botón Confirmar Recepción -->
+                    <div t-if="order.estado_rapido == 'despachado' and not order.cliente_confirmo_recepcion" class="card shadow-sm mb-4">
+                        <div class="card-body text-center">
+                            <h5 class="mb-3">¿Ya recibiste tu pedido?</h5>
+                            <button class="btn btn-success btn-lg mr-2" t-attf-onclick="confirmarRecepcion({{order.id}})">
+                                <i class="fa fa-check"></i> Sí, Recibí mi Pedido
+                            </button>
+                            <button class="btn btn-warning btn-lg" t-attf-onclick="generarReclamo({{order.id}})">
+                                <i class="fa fa-exclamation-triangle"></i> Tengo un Problema
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Información Adicional -->
+                    <div class="text-center mt-4">
+                        <p class="text-muted"><i class="fa fa-refresh"></i> Esta página se actualiza automáticamente cada 30 segundos</p>
+                        <a href="/my/orders" class="btn btn-outline-primary">
+                            <i class="fa fa-list"></i> Ver Todos mis Pedidos
+                        </a>
+                    </div>
+                </div>
+                
+                <script>
+                    setTimeout(function() { location.reload(); }, 30000);
+                    
+                    function confirmarRecepcion(orderId) {
+                        if (confirm('¿Confirmas que recibiste tu pedido correctamente?')) {
+                            fetch('/tu_pedido_v2/confirmar_recepcion/' + orderId, {
+                                method: 'POST',
+                                headers: {'Content-Type': 'application/json'},
+                                body: JSON.stringify({})
+                            }).then(response => response.json()).then(data => {
+                                if (data.success) {
+                                    alert('¡Gracias por confirmar! 🎉');
+                                    location.reload();
+                                } else {
+                                    alert('Error: ' + data.error);
+                                }
+                            });
+                        }
+                    }
+                    
+                    function generarReclamo(orderId) {
+                        const motivo = prompt('Por favor describe el problema con tu pedido:');
+                        if (motivo) {
+                            fetch('/tu_pedido_v2/generar_reclamo/' + orderId, {
+                                method: 'POST',
+                                headers: {'Content-Type': 'application/json'},
+                                body: JSON.stringify({motivo: motivo})
+                            }).then(response => response.json()).then(data => {
+                                if (data.success) {
+                                    alert('Reclamo registrado. Nos pondremos en contacto contigo pronto.');
+                                    location.reload();
+                                } else {
+                                    alert('Error: ' + data.error);
+                                }
+                            });
+                        }
+                    }
+                </script>
+            </t>
+        </xpath>
+    </template>
+</odoo>

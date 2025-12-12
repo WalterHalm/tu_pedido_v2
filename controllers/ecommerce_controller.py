@@ -1,5 +1,6 @@
 from odoo import http, fields
 from odoo.http import request
+from odoo.addons.website_sale.controllers.main import WebsiteSale
 import json
 
 class EcommerceController(http.Controller):
@@ -198,3 +199,17 @@ class EcommerceController(http.Controller):
                 'success': False,
                 'error': str(e)
             }
+
+
+class WebsiteSaleInherit(WebsiteSale):
+    
+    @http.route(['/shop/confirmation'], type='http', auth="public", website=True, sitemap=False)
+    def shop_payment_confirmation(self, **post):
+        response = super(WebsiteSaleInherit, self).shop_payment_confirmation(**post)
+        
+        if hasattr(response, 'qcontext'):
+            order = response.qcontext.get('order')
+            if order and order.estado_rapido:
+                response.qcontext['show_tracking_button'] = True
+        
+        return response
