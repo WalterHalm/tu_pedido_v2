@@ -1,0 +1,60 @@
+<odoo>
+    <template id="shop_closed" name="Local Cerrado">
+        <t t-call="website.layout">
+            <div id="wrap" class="oe_structure oe_empty">
+                <section class="s_text_block pt96 pb96" style="background-color: #f8f9fa;">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-lg-8 offset-lg-2 text-center">
+                                <div class="card shadow-lg">
+                                    <div class="card-body p-5">
+                                        <h1 class="display-1 mb-4">🔒</h1>
+                                        <h2 class="mb-4">Local Cerrado</h2>
+                                        <p class="lead mb-4">
+                                            Lo sentimos, actualmente no estamos recibiendo pedidos online.
+                                        </p>
+                                        <div class="alert alert-info">
+                                            <h5><i class="fa fa-info-circle"></i> Información</h5>
+                                            <p class="mb-0">
+                                                Nuestro sistema de pedidos online está vinculado a nuestro punto de venta.
+                                                Podrás realizar pedidos cuando abramos el local.
+                                            </p>
+                                        </div>
+                                        <div class="mt-5">
+                                            <a href="/shop" class="btn btn-primary btn-lg mr-2">
+                                                <i class="fa fa-arrow-left"></i> Volver a la Tienda
+                                            </a>
+                                            <a href="/" class="btn btn-outline-secondary btn-lg">
+                                                <i class="fa fa-home"></i> Ir al Inicio
+                                            </a>
+                                        </div>
+                                        <div class="mt-4">
+                                            <small class="text-muted">
+                                                <i class="fa fa-clock-o"></i> Esta página se actualizará automáticamente
+                                            </small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+            
+            <script>
+                // Verificar cada 30 segundos si el local abrió
+                setInterval(function() {
+                    fetch('/shop/status', {
+                        method: 'POST',
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify({})
+                    }).then(response => response.json()).then(data => {
+                        if (data.result &amp;&amp; data.result.abierto) {
+                            location.reload();
+                        }
+                    });
+                }, 30000);
+            </script>
+        </t>
+    </template>
+</odoo>

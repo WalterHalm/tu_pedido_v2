@@ -12,6 +12,11 @@ Sistema completo de gestión de pedidos para restaurantes de comida rápida desa
 - Actualización automática cada 30 segundos
 - Notificaciones sonoras para pedidos nuevos (cada 10 segundos hasta aceptar/rechazar)
 - Efectos visuales (parpadeo) para pedidos nuevos con desactivación automática
+- **Filtros avanzados**:
+  - 📅 Por fecha: Hoy (por defecto), Ayer, Últimos 7 días, Todos
+  - 👤 Por cliente: Búsqueda por nombre
+  - 🌐 Por origen: Web o Punto de Venta
+  - 📊 Por estado: Todos los estados disponibles
 
 ### 🔔 Sistema de Notificaciones Unificado
 - **🌐 Notificaciones Web**: Alertas de pedidos nuevos del eCommerce en PoS (botón azul)
@@ -30,14 +35,26 @@ Sistema completo de gestión de pedidos para restaurantes de comida rápida desa
 
 ### 🛒 Integración con eCommerce
 - API para verificar si el restaurante está abierto
-- Creación automática de pedidos desde el eCommerce
-- Widget para que el cliente vea el estado de su pedido en tiempo real
-- Barra de progreso visual del estado del pedido
+- **Control de compras por sesión PoS**: Solo permite compras cuando hay sesión PoS abierta
+- Banner de estado en carrito (abierto/cerrado)
+- Página personalizada cuando el local está cerrado
+- Creación automática de pedidos desde el eCommerce (solo al confirmar pago)
+- **Página de confirmación mejorada** con:
+  - Número de pedido destacado
+  - Barra de progreso en tiempo real
+  - Detalle completo de productos ordenados
+  - Información de entrega (delivery o pickup)
+  - Dirección completa si es delivery
+  - Tiempo transcurrido y estimado
+  - Actualización automática cada 30 segundos
+- Widget en portal del cliente (/my/orders) con seguimiento completo
 
 ### 📱 Confirmación del Cliente
-- Botón "Recibí mi pedido" cuando el estado llega a "Despachado/Retirado"
+- Botón "Recibí mi pedido" en página de confirmación cuando el estado llega a "Despachado/Retirado"
+- Botón "Tengo un Problema" para generar reclamos
 - Cambio automático a "Entregado" al confirmar recepción
 - Posibilidad de marcar como entregado manualmente desde el dashboard
+- Interfaz amigable con emojis y colores intuitivos
 
 ### 🔄 Automatizaciones
 - Pedidos creados automáticamente en estado "Nuevo"
@@ -83,8 +100,15 @@ Sistema completo de gestión de pedidos para restaurantes de comida rápida desa
 ### Para los Clientes (eCommerce)
 
 1. **Realizar Pedido**: Crear pedido desde el sitio web
-2. **Seguimiento**: Acceder al widget de estado con el ID del pedido
-3. **Confirmación**: Confirmar recepción cuando el pedido esté despachado
+2. **Página de Confirmación**: Después del pago, ver:
+   - Número de pedido
+   - Estado en tiempo real con barra de progreso
+   - Detalle completo de productos
+   - Información de entrega (dirección si es delivery)
+   - Tiempo transcurrido y estimado
+3. **Seguimiento Continuo**: La página se actualiza automáticamente cada 30 segundos
+4. **Confirmación de Recepción**: Cuando el pedido esté despachado, confirmar recepción o reportar problemas
+5. **Portal de Pedidos**: Acceder a /my/orders para ver historial completo
 
 ## APIs Disponibles
 
@@ -159,6 +183,9 @@ Widget HTML para mostrar el estado del pedido al cliente
 - `direccion_entrega_completa`: Dirección completa para delivery
 - `tiempo_estado_minutos`: Minutos en el estado actual (computado)
 - `tiempo_total_minutos`: Minutos totales desde creación (computado)
+- `tiempo_estimado_entrega`: Tiempo estimado de entrega en minutos
+- `tiene_reclamo`: Boolean si el cliente generó un reclamo
+- `descripcion_reclamo`: Descripción del reclamo del cliente
 
 ## Campos Adicionales en Órdenes PoS
 
@@ -207,6 +234,41 @@ LGPL-3
 
 ---
 
-**Versión**: 2.1.0  
+**Versión**: 2.3.0  
 **Última actualización**: Enero 2025  
 **Autor**: Walter Halm - Tu Pedido v2
+
+---
+
+## Changelog v2.3.0
+
+### ✨ Nuevas Funcionalidades
+- **Control de compras por sesión PoS**: El sitio web solo permite compras cuando hay sesión PoS abierta
+- **Filtros avanzados en dashboard**: Filtrar por fecha, cliente, origen (Web/PoS) y estado
+- **Pedidos solo al confirmar pago**: Los pedidos web aparecen en dashboard solo después del pago confirmado
+- **Banner de estado en carrito**: Indica si el local está abierto o cerrado
+- **Página /shop/closed**: Vista personalizada cuando el local está cerrado
+
+### 🔧 Mejoras v2.3.0
+- Filtro por defecto muestra pedidos de "Hoy"
+- Mejor manejo de errores en confirmación de recepción
+- Corrección de wizard para aceptar/rechazar pedidos
+- Eliminación de código JavaScript en desuso
+- Optimización de controladores
+
+---
+
+## Changelog v2.2.0
+
+### ✨ Nuevas Funcionalidades
+- **Página de confirmación mejorada**: Interfaz completa con toda la información del pedido
+- **Detalles de productos**: El cliente ve exactamente qué ordenó con precios
+- **Información de entrega**: Muestra dirección completa si es delivery o indica retiro en local
+- **Botones de acción**: Confirmar recepción o reportar problemas directamente
+
+### 🔧 Mejoras
+- Mejor experiencia visual con cards y colores
+- Emojis intuitivos para cada estado
+- Actualización automática de estado cada 30 segundos
+- Enlace directo al portal de pedidos
+- Diseño responsive para móviles

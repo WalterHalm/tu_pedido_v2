@@ -12,7 +12,7 @@ class SaleOrder(models.Model):
         ("despachado", "Despachado/Retirado"),
         ("entregado", "Entregado"),
         ("rechazado", "Rechazado"),
-    ], default="nuevo", string="Estado Pedido")
+    ], string="Estado Pedido")
 
     nota_cocina = fields.Text(string="Notas Cocina")
     tiempo_inicio_estado = fields.Datetime(default=fields.Datetime.now)
@@ -60,18 +60,8 @@ class SaleOrder(models.Model):
         
         result = super().create(vals)
         
-        # Si es pedido web, configurar y notificar
-        if result.website_id:
-            import logging
-            _logger = logging.getLogger(__name__)
-            _logger.info(f"🌐 PEDIDO WEB CREADO: {result.name} - Website: {result.website_id}")
-            
-            result.estado_rapido = 'nuevo'
-            result.tiempo_inicio_estado = fields.Datetime.now()
-            result.tiempo_inicio_total = fields.Datetime.now()
-            result.sonido_activo = True
-            result._detectar_tipo_entrega()
-            result._notificar_pedido_web_pos()
+        # NO activar dashboard para pedidos web en borrador
+        # Solo se activará cuando el estado cambie a 'sale' en write() o action_confirm()
         
         # Detectar tipo de entrega si es estado "nuevo"
         if result.estado_rapido == 'nuevo':

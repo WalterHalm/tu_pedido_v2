@@ -12,15 +12,11 @@ class PedidoDashboardController(http.Controller):
     
     @http.route('/tu_pedido_v2/dashboard_data', type='json', auth='user')
     def dashboard_data(self):
-        # Fecha de inicio del día actual (00:00:00)
-        hoy_inicio = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
-        
-        # Obtener pedidos de venta solo del día actual
+        # Obtener todos los pedidos activos (sin filtro de fecha)
         pedidos_venta = request.env['sale.order'].sudo().search([
             ('estado_rapido', '!=', False),
             ('estado_rapido', '!=', 'entregado'),
-            ('estado_rapido', '!=', 'rechazado'),
-            ('create_date', '>=', hoy_inicio)
+            ('estado_rapido', '!=', 'rechazado')
         ])
         
         # Corregir pedidos sin estado que tienen tracking en nota_cocina
@@ -53,25 +49,23 @@ class PedidoDashboardController(http.Controller):
             })
             pedido._detectar_tipo_entrega()
         
-        # Volver a buscar incluyendo los corregidos (solo del día actual)
+        # Volver a buscar incluyendo los corregidos
         pedidos_venta = request.env['sale.order'].sudo().search([
             ('estado_rapido', '!=', False),
             ('estado_rapido', '!=', 'entregado'),
-            ('estado_rapido', '!=', 'rechazado'),
-            ('create_date', '>=', hoy_inicio)
+            ('estado_rapido', '!=', 'rechazado')
         ])
         
         # Logs de depuración removidos para producción
         
         # Debug logs removidos para producción
         
-        # Obtener pedidos PoS enviados a cocina solo del día actual
+        # Obtener pedidos PoS enviados a cocina
         pedidos_pos = request.env['pos.order'].sudo().search([
             ('enviado_a_cocina', '=', True),
             ('estado_rapido', '!=', False),
             ('estado_rapido', '!=', 'entregado'),
-            ('estado_rapido', '!=', 'rechazado'),
-            ('create_date', '>=', hoy_inicio)
+            ('estado_rapido', '!=', 'rechazado')
         ]) if 'pos.order' in request.env else request.env['pos.order'].sudo().browse([])
         
         # Debug logs removidos para producción
@@ -136,9 +130,10 @@ class PedidoDashboardController(http.Controller):
                     'direccion_entrega_completa': getattr(orden, 'direccion_entrega_completa', '') or '',
                     'pedido_cancelado': is_cancelled,
                     'motivo_cancelacion': motivo_cancelacion,
-                    'tipo_pedido': 'web',
+                    'tipo_pedido': 'web' if orden.website_id else 'pos',
                     'mesa': '',
-                    'comensales': 0
+                    'comensales': 0,
+                    'create_date': orden.create_date.isoformat() if orden.create_date else datetime.now().isoformat()
                 })
             
             # Procesar pedidos PoS si existen
@@ -205,9 +200,10 @@ class PedidoDashboardController(http.Controller):
                         'direccion_entrega_completa': getattr(orden, 'direccion_delivery', '') or '',
                         'pedido_cancelado': orden.state == 'cancel',
                         'motivo_cancelacion': 'Pedido cancelado desde PoS' if orden.state == 'cancel' else '',
-                        'tipo_pedido': getattr(orden, 'tipo_pedido', 'mostrador'),
+                        'tipo_pedido': 'pos',
                         'mesa': mesa_info,
-                        'comensales': getattr(orden, 'customer_count', 0) or 0
+                        'comensales': getattr(orden, 'customer_count', 0) or 0,
+                        'create_date': orden.create_date.isoformat() if orden.create_date else datetime.now().isoformat()
                     })
             
             columnas.append({

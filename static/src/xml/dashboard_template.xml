@@ -156,7 +156,49 @@
     
     <div class="dashboard-header">
       <h2>🍕 Dashboard de Pedidos - Tu Pedido</h2>
-      <div class="dashboard-controls">
+      <div class="dashboard-filters">
+        <div class="filter-group">
+          <label>📅 Fecha:</label>
+          <select class="form-control" t-model="state.filters.fecha" t-on-change="() => this.applyFilters()">
+            <option value="hoy">Hoy</option>
+            <option value="ayer">Ayer</option>
+            <option value="ultimos_7">Últimos 7 días</option>
+            <option value="todos">Todos</option>
+          </select>
+        </div>
+        
+        <div class="filter-group">
+          <label>👤 Cliente:</label>
+          <input type="text" class="form-control" placeholder="Buscar cliente..." 
+                 t-model="state.filters.cliente" t-on-input="() => this.applyFilters()"/>
+        </div>
+        
+        <div class="filter-group">
+          <label>🌐 Origen:</label>
+          <select class="form-control" t-model="state.filters.origen" t-on-change="() => this.applyFilters()">
+            <option value="todos">Todos</option>
+            <option value="web">Web</option>
+            <option value="pos">Punto de Venta</option>
+          </select>
+        </div>
+        
+        <div class="filter-group">
+          <label>📊 Estado:</label>
+          <select class="form-control" t-model="state.filters.estado" t-on-change="() => this.applyFilters()">
+            <option value="todos">Todos</option>
+            <option value="nuevo">Nuevo</option>
+            <option value="aceptado">Aceptado</option>
+            <option value="preparacion">En Preparación</option>
+            <option value="terminado">Terminado</option>
+            <option value="despachado">Despachado</option>
+            <option value="rechazado">Rechazado</option>
+          </select>
+        </div>
+        
+        <button class="btn btn-secondary btn-sm" t-on-click="() => this.resetFilters()">
+          🔄 Limpiar Filtros
+        </button>
+        
         <button class="btn btn-primary" t-on-click="() => this.loadData()">
           🔄 Actualizar
         </button>

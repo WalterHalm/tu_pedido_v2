@@ -1,0 +1,41 @@
+<odoo>
+    <template id="shop_cart_status_banner" inherit_id="website_sale.cart">
+        <xpath expr="//div" position="before">
+            <script>
+                document.addEventListener('DOMContentLoaded', function() {
+                    fetch('/shop/status', {
+                        method: 'POST',
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify({})
+                    }).then(response => response.json()).then(data => {
+                        const abierto = data.result &amp;&amp; data.result.abierto;
+                        const banner = document.createElement('div');
+                        banner.className = 'alert text-center mb-0';
+                        banner.style.borderRadius = '0';
+                        
+                        if (abierto) {
+                            banner.classList.add('alert-success');
+                            banner.innerHTML = '<div class="container"><h5 class="mb-0"><i class="fa fa-check-circle"></i> ¡Estamos Abiertos! Realiza tu pedido ahora</h5></div>';
+                        } else {
+                            banner.classList.add('alert-danger');
+                            banner.innerHTML = '<div class="container"><h4 class="mb-2"><i class="fa fa-lock"></i> Local Cerrado</h4><p class="mb-0">No puedes procesar tu pedido en este momento. El local está cerrado.</p></div>';
+                            
+                            // Deshabilitar botón de checkout
+                            const checkoutBtn = document.querySelector('a[href*="/shop/checkout"]');
+                            if (checkoutBtn) {
+                                checkoutBtn.style.display = 'none';
+                                const disabledBtn = document.createElement('button');
+                                disabledBtn.className = 'btn btn-secondary float-right disabled';
+                                disabledBtn.disabled = true;
+                                disabledBtn.innerHTML = '<i class="fa fa-lock"></i> Local Cerrado - No Disponible';
+                                checkoutBtn.parentNode.appendChild(disabledBtn);
+                            }
+                        }
+                        
+                        document.body.insertBefore(banner, document.body.firstChild);
+                    });
+                });
+            </script>
+        </xpath>
+    </template>
+</odoo>

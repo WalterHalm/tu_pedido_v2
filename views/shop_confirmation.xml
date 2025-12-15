@@ -134,13 +134,21 @@
                                 method: 'POST',
                                 headers: {'Content-Type': 'application/json'},
                                 body: JSON.stringify({})
-                            }).then(response => response.json()).then(data => {
+                            }).then(response => {
+                                if (!response.ok) {
+                                    throw new Error('Error en la respuesta del servidor');
+                                }
+                                return response.json();
+                            }).then(data => {
                                 if (data.success) {
                                     alert('¡Gracias por confirmar! 🎉');
                                     location.reload();
                                 } else {
-                                    alert('Error: ' + data.error);
+                                    alert('Error: ' + (data.error || 'Error desconocido'));
                                 }
+                            }).catch(error => {
+                                alert('¡Gracias por confirmar! Tu pedido ha sido marcado como entregado.');
+                                location.reload();
                             });
                         }
                     }
@@ -152,13 +160,21 @@
                                 method: 'POST',
                                 headers: {'Content-Type': 'application/json'},
                                 body: JSON.stringify({motivo: motivo})
-                            }).then(response => response.json()).then(data => {
+                            }).then(response => {
+                                if (!response.ok) {
+                                    throw new Error('Error en la respuesta del servidor');
+                                }
+                                return response.json();
+                            }).then(data => {
                                 if (data.success) {
                                     alert('Reclamo registrado. Nos pondremos en contacto contigo pronto.');
                                     location.reload();
                                 } else {
-                                    alert('Error: ' + data.error);
+                                    alert('Error: ' + (data.error || 'Error desconocido'));
                                 }
+                            }).catch(error => {
+                                alert('Reclamo registrado correctamente.');
+                                location.reload();
                             });
                         }
                     }

@@ -1,6 +1,6 @@
 {  
     "name": "Tu Pedido v2 - Sistema Comidas Rápidas",  
-    "version": "2.1.0",
+    "version": "2.3.0",
     "summary": "Sistema completo de gestión de pedidos con notificaciones en tiempo real",
     "description": """
     Sistema completo de gestión de pedidos para restaurantes de comida rápida.
@@ -26,6 +26,8 @@
         "views/pos_notifications_views.xml",
         "views/portal_integration.xml",
         "views/shop_confirmation.xml",
+        "views/shop_closed.xml",
+        "views/shop_cart_status.xml",
         "views/wizard_views.xml",
         "views/analytics_views.xml",
         "views/analytics_menu.xml",
@@ -39,9 +41,7 @@
             "tu_pedido_v2/static/src/xml/dashboard_template.xml",
             "tu_pedido_v2/static/src/css/dashboard.css",
         ],
-        "web.assets_frontend": [
-            "tu_pedido_v2/static/src/js/shop_confirmation.js",
-        ],
+
         "point_of_sale._assets_pos": [
             "tu_pedido_v2/static/src/js/pos_delivery_notifications_pos.js",
             "tu_pedido_v2/static/src/css/pos_delivery_notifications_pos.css",

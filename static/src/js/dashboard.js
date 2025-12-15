@@ -10,12 +10,19 @@ class PedidoDashboard extends Component {
         
         this.state = useState({
             state_columns: [],
+            all_columns: [],
             loading: false,
             error: null,
             showAceptarModal: false,
             showRechazarModal: false,
             showCambiosModal: false,
             showCancelacionModal: false,
+            filters: {
+                fecha: 'hoy',
+                cliente: '',
+                origen: 'todos',
+                estado: 'todos'
+            },
             modalData: {
                 order_id: null,
                 tiempo_estimado: 30,
@@ -76,7 +83,8 @@ class PedidoDashboard extends Component {
         
         try {
             const result = await rpc("/tu_pedido_v2/dashboard_data", {});
-            this.state.state_columns = result?.columns || [];
+            this.state.all_columns = result?.columns || [];
+            this.applyFilters();
             this.checkForNewOrders();
             
             setTimeout(() => {
@@ -426,6 +434,80 @@ class PedidoDashboard extends Component {
         } catch (error) {
             // Error silencioso
         }
+    }
+    
+    applyFilters() {
+        let filteredColumns = JSON.parse(JSON.stringify(this.state.all_columns));
+        
+        filteredColumns = filteredColumns.map(col => {
+            let orders = col.orders;
+            
+            // Filtro por fecha
+            if (this.state.filters.fecha !== 'todos') {
+                const now = new Date();
+                orders = orders.filter(order => {
+                    const orderDate = new Date(order.create_date || order.tiempo_inicio_total);
+                    
+                    if (this.state.filters.fecha === 'hoy') {
+                        return orderDate.toDateString() === now.toDateString();
+                    } else if (this.state.filters.fecha === 'ayer') {
+                        const yesterday = new Date(now);
+                        yesterday.setDate(yesterday.getDate() - 1);
+                        return orderDate.toDateString() === yesterday.toDateString();
+                    } else if (this.state.filters.fecha === 'ultimos_7') {
+                        const weekAgo = new Date(now);
+                        weekAgo.setDate(weekAgo.getDate() - 7);
+                        return orderDate >= weekAgo;
+                    }
+                    return true;
+                });
+            }
+            
+            // Filtro por cliente
+            if (this.state.filters.cliente.trim()) {
+                const searchTerm = this.state.filters.cliente.toLowerCase();
+                orders = orders.filter(order => 
+                    order.partner_id[1].toLowerCase().includes(searchTerm)
+                );
+            }
+            
+            // Filtro por origen
+            if (this.state.filters.origen !== 'todos') {
+                orders = orders.filter(order => {
+                    if (this.state.filters.origen === 'web') {
+                        return order.tipo_pedido === 'web';
+                    } else if (this.state.filters.origen === 'pos') {
+                        return order.tipo_pedido !== 'web';
+                    }
+                    return true;
+                });
+            }
+            
+            // Filtro por estado
+            if (this.state.filters.estado !== 'todos') {
+                orders = orders.filter(order => 
+                    order.estado_rapido === this.state.filters.estado
+                );
+            }
+            
+            return {
+                ...col,
+                orders: orders,
+                count: orders.length
+            };
+        });
+        
+        this.state.state_columns = filteredColumns;
+    }
+    
+    resetFilters() {
+        this.state.filters = {
+            fecha: 'hoy',
+            cliente: '',
+            origen: 'todos',
+            estado: 'todos'
+        };
+        this.applyFilters();
     }
 
 
