@@ -191,7 +191,7 @@
     letter-spacing: 0.5px;
 }
 
-.badge {
+.pedido-dashboard .badge {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: white;
     padding: 6px 12px;
@@ -510,13 +510,13 @@
 }
 
 /* Botones de Acción */
-.pedido-actions {
+.pedido-dashboard .pedido-actions {
     display: flex;
     gap: 8px;
     flex-wrap: wrap;
 }
 
-.pedido-actions .btn {
+.pedido-dashboard .pedido-actions .btn {
     font-size: 12px;
     padding: 5px 10px;
     border-radius: 15px;
@@ -526,39 +526,39 @@
     transition: all 0.2s ease;
 }
 
-.btn-success {
+.pedido-dashboard .pedido-actions .btn-success {
     background: #27ae60;
     color: white;
 }
 
-.btn-success:hover {
+.pedido-dashboard .pedido-actions .btn-success:hover {
     background: #229954;
 }
 
-.btn-danger {
+.pedido-dashboard .pedido-actions .btn-danger {
     background: #e74c3c;
     color: white;
 }
 
-.btn-danger:hover {
+.pedido-dashboard .pedido-actions .btn-danger:hover {
     background: #c0392b;
 }
 
-.btn-primary {
+.pedido-dashboard .pedido-actions .btn-primary {
     background: #3498db;
     color: white;
 }
 
-.btn-primary:hover {
+.pedido-dashboard .pedido-actions .btn-primary:hover {
     background: #2980b9;
 }
 
-.btn-info {
+.pedido-dashboard .pedido-actions .btn-info {
     background: #17a2b8;
     color: white;
 }
 
-.btn-info:hover {
+.pedido-dashboard .pedido-actions .btn-info:hover {
     background: #138496;
 }
 
@@ -790,7 +790,7 @@
 }
 
 /* Estados Vacíos */
-.empty-state {
+.pedido-dashboard .empty-state {
     text-align: center;
     color: #7f8c8d;
     font-style: italic;
@@ -798,19 +798,20 @@
 }
 
 /* Loading y Error States */
-.loading-state, .error-state {
+.pedido-dashboard .loading-state, 
+.pedido-dashboard .error-state {
     text-align: center;
     padding: 40px;
     margin: 20px;
     border-radius: 10px;
 }
 
-.loading-state {
+.pedido-dashboard .loading-state {
     background: white;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
-.spinner-border {
+.pedido-dashboard .spinner-border {
     width: 3rem;
     height: 3rem;
     margin-bottom: 20px;
@@ -927,7 +928,7 @@
 }
 
 /* Estados vacíos mejorados */
-.empty-state {
+.pedido-dashboard .empty-state {
     text-align: center;
     color: #a0aec0;
     font-style: italic;
