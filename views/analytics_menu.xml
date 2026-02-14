@@ -128,7 +128,8 @@
 
     <!-- Menú Principal: Tu Pedido Reportes -->
     <menuitem id="menu_tu_pedido_reportes" 
-              name="Tu Pedido Reportes" 
+              name="Tu Pedido Reportes"
+              web_icon="tu_pedido_v2,static/description/icon2.png"
               sequence="20"/>
 
     <!-- Submenú: Analytics y Métricas -->

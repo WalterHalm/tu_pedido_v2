@@ -6,7 +6,16 @@ import { ActionpadWidget } from "@point_of_sale/app/screens/product_screen/actio
 patch(ActionpadWidget.prototype, {
     get showKitchenButton() {
         const currentOrder = this.pos.get_order();
-        return currentOrder && currentOrder.lines.length > 0;
+        if (!currentOrder || currentOrder.lines.length === 0) {
+            return false;
+        }
+        
+        // No mostrar botón si ya fue enviado a cocina
+        if (currentOrder.enviado_a_cocina) {
+            return false;
+        }
+        
+        return true;
     },
 
     async sendToKitchen() {

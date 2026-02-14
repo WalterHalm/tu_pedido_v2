@@ -24,6 +24,12 @@ class PosNotificationsController(http.Controller):
         """Obtener notificaciones de delivery para el PoS"""
         notifications = []
         
+        # Debug: buscar TODOS los pedidos terminados
+        all_terminados = request.env['sale.order'].sudo().search([('estado_rapido', '=', 'terminado')])
+        print(f"🔍 Total terminados: {len(all_terminados)}")
+        for o in all_terminados:
+            print(f"  - {o.name}: es_para_envio={o.es_para_envio}")
+        
         # Buscar pedidos delivery terminados (tanto PoS como Sale)
         # PoS orders
         pos_delivery_orders = request.env['pos.order'].sudo().search([
@@ -51,6 +57,7 @@ class PosNotificationsController(http.Controller):
             ('es_para_envio', '=', True),
             ('estado_rapido', '=', 'terminado')
         ])
+        print(f"🚚 Delivery terminados: {len(sale_delivery_orders)}")
         
         for order in sale_delivery_orders:
             # Determinar tipo real: web si tiene website_id, pos si tiene tracking en nota_cocina
@@ -132,10 +139,10 @@ class PosNotificationsController(http.Controller):
         """Obtener notificaciones de pedidos web nuevos para el PoS"""
         notifications = []
         
-        # Buscar pedidos web no despachados (nuevo, aceptado, preparación, terminado)
+        # Buscar pedidos web en estado nuevo
         web_orders = request.env['sale.order'].sudo().search([
             ('website_id', '!=', False),
-            ('estado_rapido', 'in', ['nuevo', 'aceptado', 'preparacion', 'terminado'])
+            ('estado_rapido', '=', 'nuevo')
         ])
         
         for order in web_orders:
