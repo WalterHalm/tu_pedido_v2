@@ -1,7 +1,7 @@
 <odoo>
     <template id="shop_confirmation_tracking_mejorado" inherit_id="website_sale.confirmation" priority="100">
         <xpath expr="//div" position="after">
-            <t t-if="order">
+            <t t-if="order and order.estado_rapido">
                 <div class="container mt-4 mb-5">
                     <!-- Número de Pedido -->
                     <div class="alert alert-success text-center mb-4">
@@ -10,26 +10,7 @@
                         <p class="mb-0">Guarda este número para consultar tu pedido</p>
                     </div>
                     
-                    <!-- Si NO tiene estado_rapido, mostrar mensaje de espera -->
-                    <t t-if="not order.estado_rapido">
-                        <div class="card shadow-sm mb-4">
-                            <div class="card-header bg-info text-white">
-                                <h4 class="mb-0"><i class="fa fa-clock-o"></i> Tu pedido está siendo procesado</h4>
-                            </div>
-                            <div class="card-body text-center">
-                                <div class="alert alert-info">
-                                    <h4>💵 Pago en Efectivo</h4>
-                                    <p class="mb-0">Tu pedido ha sido recibido y está siendo validado por nuestro equipo.</p>
-                                    <p class="mb-0">En breve comenzaremos a prepararlo.</p>
-                                    <p class="mt-3 mb-0"><strong>Pagarás en efectivo al recibir tu pedido.</strong></p>
-                                </div>
-                                <p class="text-muted mt-3"><i class="fa fa-refresh"></i> Esta página se actualizará automáticamente</p>
-                            </div>
-                        </div>
-                    </t>
-                    
-                    <!-- Si tiene estado_rapido, mostrar barra de progreso -->
-                    <t t-if="order.estado_rapido">
+                    <!-- Estado del Pedido -->
                     <div class="card shadow-sm mb-4">
                         <div class="card-header bg-primary text-white">
                             <h4 class="mb-0"><i class="fa fa-clock-o"></i> Estado en Tiempo Real</h4>
@@ -65,8 +46,6 @@
                             </div>
                         </div>
                     </div>
-                    
-                    </t>
                     
                     <!-- Detalles del Pedido -->
                     <div class="card shadow-sm mb-4">

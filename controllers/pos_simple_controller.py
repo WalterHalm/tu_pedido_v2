@@ -72,7 +72,7 @@ class PosSimpleController(http.Controller):
             
             print(f"DEBUG: Es delivery: {is_delivery}")
             if is_delivery:
-                print(f"DEBUG: Productos con delivery: {[p.get('name') for p in products if any(word in p.get('name', '').lower() for word in ['envio', 'envío', 'delivery', 'entrega', 'estandar'])]}")
+                print(f"DEBUG: Productos: {[p.get('name') for p in products]}")
             
             # Crear registro simple en sale.order para el dashboard
             order_vals = {
@@ -142,7 +142,9 @@ class PosSimpleController(http.Controller):
             # Commit para que aparezca inmediatamente
             request.env.cr.commit()
 
-            print(f"DEBUG: Pedido final creado - ID: {order.id}, Estado: {order.estado_rapido}, es_para_envio: {order.es_para_envio}")
+            print(f"DEBUG: Pedido final - es_para_envio: {order.es_para_envio}")
+            
+            print(f"DEBUG: Pedido final creado - ID: {order.id}, Estado: {order.estado_rapido}, Es delivery: {order.es_para_envio}")
             
             return {
                 'success': True,
